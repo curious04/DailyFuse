@@ -1039,10 +1039,10 @@ body{
       <div class="fg"><label class="label">Category</label><div class="cat-grid4" id="fCatGrid"></div></div>
       <div class="fg"><label class="label">Tracking type</label>
         <div class="type-grid" id="fTypeGrid">
-          <div class="type-opt sel" data-type="boolean" onclick="selType(this)"><div class="ti">✅</div><div class="tn">Done/Not</div></div>
-          <div class="type-opt" data-type="number" onclick="selType(this)"><div class="ti">🔢</div><div class="tn">Count</div></div>
-          <div class="type-opt" data-type="duration" onclick="selType(this)"><div class="ti">⏱️</div><div class="tn">Duration</div></div>
-          <div class="type-opt" data-type="range" onclick="selType(this)"><div class="ti">📊</div><div class="tn">Range</div></div>
+          <div class="type-opt sel" data-type="boolean" onclick="pickType(this)"><div class="ti">✅</div><div class="tn">Done/Not</div></div>
+          <div class="type-opt" data-type="number" onclick="pickType(this)"><div class="ti">🔢</div><div class="tn">Count</div></div>
+          <div class="type-opt" data-type="duration" onclick="pickType(this)"><div class="ti">⏱️</div><div class="tn">Duration</div></div>
+          <div class="type-opt" data-type="range" onclick="pickType(this)"><div class="ti">📊</div><div class="tn">Range</div></div>
         </div>
       </div>
       <div id="fTargetWrap" style="display:none">
@@ -1984,7 +1984,7 @@ function pickedColor(c,el){
   document.querySelectorAll('#fColors .cdot').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
 }
-function selType(el){
+function pickType(el){
   selType=el.dataset.type;
   document.querySelectorAll('#fTypeGrid .type-opt').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel'); updateTargetVis();
