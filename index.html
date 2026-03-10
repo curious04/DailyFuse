@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <style>
 /* ─── THEME SYSTEM ─────────────────────────────────────────────────────── */
 :root {
@@ -782,24 +784,39 @@ body{
     <div class="g-popup-header">
       <div class="g-popup-logo">
         <svg width="24" height="24" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
-        <span style="font-size:14px;color:#5f6368">Sign in with Google</span>
+        <span style="font-size:13px;color:#5f6368;font-weight:500">Sign in with Google</span>
       </div>
       <div class="g-popup-title">Choose an account</div>
-      <div class="g-popup-sub">to continue to DailyFuse</div>
+      <div class="g-popup-sub">to continue to <b>DailyFuse</b></div>
     </div>
+
+    <!-- Saved accounts list -->
     <div id="gAccountsList"></div>
-    <div class="g-new-account" onclick="showNewAccountForm()">
-      <div class="g-add-icon">+</div>
-      <div><div style="font-size:14px;color:#202124;font-weight:500">Use another account</div></div>
+
+    <!-- Google One Tap / OAuth button rendered here -->
+    <div id="gOneTapWrap" style="padding:12px 24px;display:none">
+      <div id="g_id_signin_btn"></div>
     </div>
-    <div id="newAccountForm" style="display:none;padding:12px 24px">
-      <input id="gEmailInput" placeholder="Email address" style="width:100%;border:1px solid #dadce0;border-radius:4px;padding:10px 12px;font-size:14px;outline:none;margin-bottom:8px"/>
-      <input id="gNameInput" placeholder="Your name" style="width:100%;border:1px solid #dadce0;border-radius:4px;padding:10px 12px;font-size:14px;outline:none"/>
-      <button onclick="signInWithCustomAccount()" style="margin-top:12px;background:#1a73e8;color:#fff;border:none;border-radius:4px;padding:10px 20px;font-size:14px;cursor:pointer;width:100%">Next</button>
+
+    <!-- Manual email form -->
+    <div id="gManualForm" style="display:none;padding:0 24px 12px">
+      <div style="font-size:13px;color:#5f6368;margin-bottom:12px">Enter your details to create a personal account</div>
+      <input id="gNameInput" placeholder="Full name" style="width:100%;border:1px solid #dadce0;border-radius:6px;padding:10px 13px;font-size:14px;outline:none;margin-bottom:10px;font-family:inherit"/>
+      <input id="gEmailInput" placeholder="Email address" type="email" style="width:100%;border:1px solid #dadce0;border-radius:6px;padding:10px 13px;font-size:14px;outline:none;margin-bottom:10px;font-family:inherit"/>
+      <div style="font-size:11px;color:#80868b;margin-bottom:12px">We'll use this email to send your daily reminders and progress reports.</div>
+      <button onclick="signInWithManualAccount()" style="background:#1a73e8;color:#fff;border:none;border-radius:6px;padding:11px 20px;font-size:14px;cursor:pointer;width:100%;font-weight:500;font-family:inherit">Create Account &amp; Sign In</button>
     </div>
+
+    <div class="g-new-account" onclick="showGManualForm()">
+      <div class="g-add-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div style="font-size:14px;color:#202124;font-weight:500">Use another account</div>
+    </div>
+
     <div class="g-popup-footer">
       <span class="g-link" onclick="closeGooglePopup()">Cancel</span>
-      <div style="display:flex;gap:12px">
+      <div style="display:flex;gap:14px">
         <span class="g-link">Help</span>
         <span class="g-link">Privacy</span>
         <span class="g-link">Terms</span>
@@ -821,21 +838,53 @@ body{
       </div>
     </div>
     <div class="nav-section-label">Main</div>
-    <div class="nav-item active" onclick="navTo('today',this)" data-page="today"><span class="nav-icon">🏠</span><span>Today</span></div>
-    <div class="nav-item" onclick="navTo('goals',this)" data-page="goals"><span class="nav-icon">🎯</span><span>All Goals</span><span class="nav-badge" id="navGoalCount">0</span></div>
-    <div class="nav-item" onclick="navTo('analytics',this)" data-page="analytics"><span class="nav-icon">📈</span><span>Analytics</span></div>
-    <div class="nav-item" onclick="navTo('heatmap',this)" data-page="heatmap"><span class="nav-icon">🗓️</span><span>Heatmap</span></div>
-    <div class="nav-item" onclick="navTo('report',this)" data-page="report"><span class="nav-icon">📋</span><span>Reports</span></div>
+    <div class="nav-item active" onclick="navTo('today',this)" data-page="today">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+      <span>Today</span>
+    </div>
+    <div class="nav-item" onclick="navTo('goals',this)" data-page="goals">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+      <span>All Goals</span><span class="nav-badge" id="navGoalCount">0</span>
+    </div>
+    <div class="nav-item" onclick="navTo('analytics',this)" data-page="analytics">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+      <span>Analytics</span>
+    </div>
+    <div class="nav-item" onclick="navTo('heatmap',this)" data-page="heatmap">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+      <span>Heatmap</span>
+    </div>
+    <div class="nav-item" onclick="navTo('report',this)" data-page="report">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+      <span>Reports</span>
+    </div>
     <div class="nav-section-label">Tools</div>
-    <div class="nav-item" onclick="openFocusMode()"><span class="nav-icon">🎧</span><span>Focus Mode</span></div>
-    <div class="nav-item" onclick="openCmdPalette()"><span class="nav-icon">⌘</span><span>Command</span></div>
-    <div class="nav-item" onclick="openCustomPanel()"><span class="nav-icon">🎨</span><span>Customize</span></div>
+    <div class="nav-item" onclick="openFocusMode()">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+      <span>Focus Mode</span>
+    </div>
+    <div class="nav-item" onclick="openCmdPalette()">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></span>
+      <span>Command</span>
+    </div>
+    <div class="nav-item" onclick="navTo('reminders',this)" data-page="reminders">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+      <span>Reminders</span>
+    </div>
+    <div class="nav-item" onclick="openCustomPanel()">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></span>
+      <span>Customize</span>
+    </div>
     <div class="sidebar-bottom">
       <div class="focus-timer-mini" id="focusTimerMini" onclick="openFocusMode()">
-        <span>🎧</span><span>Focus Timer</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Focus</span>
         <span class="focus-time-display" id="miniTimerDisplay">25:00</span>
       </div>
-      <div class="nav-item" onclick="logout()"><span class="nav-icon">🚪</span><span>Sign out</span></div>
+      <div class="nav-item" onclick="logout()">
+        <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        <span>Sign out</span>
+      </div>
     </div>
   </nav>
 
@@ -969,6 +1018,60 @@ body{
         </div>
       </div>
       <div class="report-preview" id="reportPreview"></div>
+    </div>
+
+    <!-- REMINDERS PAGE -->
+    <div class="page" id="page-reminders">
+      <div class="page-header">
+        <div><div class="page-title">Reminders &amp; Email</div><div class="page-sub" id="reminderUserEmail"></div></div>
+        <div class="header-actions">
+          <button class="btn btn-primary btn-sm" onclick="sendTestEmail()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Send Test Email
+          </button>
+        </div>
+      </div>
+
+      <div class="card" style="padding:24px;margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+          <div style="width:44px;height:44px;border-radius:10px;background:var(--primary-bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary2)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:15px">Your email account</div>
+            <div style="font-size:13px;color:var(--text2)" id="emailAccountDisplay">Not connected</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="changeEmailAccount()">Change</button>
+        </div>
+        <div style="background:var(--bg3);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--text2);line-height:1.7">
+          <b style="color:var(--text)">What emails you will receive:</b><br>
+          &bull; Daily morning reminder with today's goals<br>
+          &bull; Weekly progress summary every Sunday<br>
+          &bull; Celebration email when you complete all goals<br>
+          &bull; Streak milestone alerts (7d, 30d, 100d)
+        </div>
+      </div>
+
+      <div class="card" style="padding:24px;margin-bottom:18px">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;margin-bottom:16px">Reminder Settings</div>
+        <div class="fg">
+          <label class="label">Daily reminder time</label>
+          <input class="input" id="reminderTime" type="time" value="08:00" style="max-width:180px"/>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+          <div class="toggle-row"><span class="toggle-label">Morning goal reminder</span><div class="toggle on" id="togRemMorning" onclick="this.classList.toggle('on');saveReminderPrefs()"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Weekly summary (Sunday)</span><div class="toggle on" id="togRemWeekly" onclick="this.classList.toggle('on');saveReminderPrefs()"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Goal completion celebration</span><div class="toggle on" id="togRemComplete" onclick="this.classList.toggle('on');saveReminderPrefs()"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Streak milestone alerts</span><div class="toggle on" id="togRemStreak" onclick="this.classList.toggle('on');saveReminderPrefs()"></div></div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:18px" onclick="saveReminderPrefs();showToast('Reminder settings saved!','success')">Save Settings</button>
+      </div>
+
+      <div class="card" style="padding:24px">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;margin-bottom:6px">Email Preview</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:16px">This is what your daily reminder looks like</div>
+        <div id="emailPreviewBox" style="background:#fff;border-radius:10px;overflow:hidden;border:1px solid var(--border2)"></div>
+      </div>
     </div>
   </main>
 </div>
@@ -1409,49 +1512,125 @@ function addCheckin(goalId,value,note) {
 }
 
 /* ────────────────────────────────────────────────────────
-   AUTH
+   GOOGLE OAUTH + AUTH SYSTEM
 ──────────────────────────────────────────────────────── */
-function startGoogleLogin() {
-  Sound.init(); Sound.click();
-  const accs = getKnownAccounts();
-  const list = document.getElementById('gAccountsList');
-  const AVATAR_COLORS=['#4285F4','#EA4335','#34A853','#FBBC05','#9C27B0','#00BCD4'];
-  list.innerHTML = accs.map((u,i)=>`
-    <div class="g-account" onclick="signInAs(${JSON.stringify(JSON.stringify(u))})">
-      <div class="g-avatar" style="background:${AVATAR_COLORS[i%AVATAR_COLORS.length]}">${u.name[0].toUpperCase()}</div>
-      <div class="g-account-info">
-        <div class="g-account-name">${u.name}</div>
-        <div class="g-account-email">${u.email}</div>
-      </div>
-    </div>`).join('');
-  document.getElementById('newAccountForm').style.display = 'none';
-  document.getElementById('googleAuthPopup').classList.add('open');
+const GOOGLE_CLIENT_ID = ''; // Not needed for localStorage-based auth
+const AVATAR_COLORS = ['#4285F4','#EA4335','#34A853','#FBBC05','#9C27B0','#00BCD4','#FF6D00','#00897B'];
+
+/* Initialize Google Identity Services when available */
+function initGoogleSignIn() {
+  if(typeof google === 'undefined' || !google.accounts) return;
+  try {
+    google.accounts.id.initialize({
+      client_id: '473827423941-example.apps.googleusercontent.com', // demo client id
+      callback: handleGoogleCredential,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+      context: 'signin',
+    });
+  } catch(e) {
+    console.warn('Google Sign-In not available:', e);
+  }
 }
 
-function signInAs(uJson) {
+function handleGoogleCredential(response) {
+  try {
+    /* Decode JWT payload (no signature verification needed client-side) */
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    const user = {
+      id: payload.sub || btoa(payload.email),
+      name: payload.name,
+      email: payload.email,
+      picture: payload.picture || null,
+      googleLinked: true,
+    };
+    closeGooglePopup();
+    loginAs(user);
+  } catch(e) {
+    console.error('Google credential error:', e);
+    showGManualForm();
+  }
+}
+
+function startGoogleLogin() {
+  Sound.init(); Sound.click();
+  const popup = document.getElementById('googleAuthPopup');
+  popup.classList.add('open');
+  document.getElementById('gManualForm').style.display = 'none';
+  document.getElementById('gOneTapWrap').style.display = 'none';
+
+  /* Render saved accounts */
+  renderSavedAccounts();
+
+  /* Try to render Google button */
+  setTimeout(() => {
+    if(typeof google !== 'undefined' && google.accounts) {
+      try {
+        document.getElementById('gOneTapWrap').style.display = 'block';
+        document.getElementById('g_id_signin_btn').innerHTML = '';
+        google.accounts.id.renderButton(
+          document.getElementById('g_id_signin_btn'),
+          { theme:'outline', size:'large', width:312, text:'continue_with', shape:'rectangular', logo_alignment:'left' }
+        );
+      } catch(e) { /* Google API not ready */ }
+    }
+  }, 300);
+}
+
+function renderSavedAccounts() {
+  const accs = getKnownAccounts();
+  const list = document.getElementById('gAccountsList');
+  if(!accs.length) { list.innerHTML = ''; return; }
+  const html = accs.map((u, i) => {
+    const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
+    const initials = u.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+    const picHtml = u.picture ? '<img src="' + escH(u.picture) + '" style="width:40px;height:40px;border-radius:50%;object-fit:cover">' : '';
+    const badge = u.googleLinked ? '<div style="position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-radius:50%;background:#1a73e8;display:flex;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>' : '';
+    const uJson = escH(JSON.stringify(u));
+    return '<div class="g-account" onclick="signInAs(this.dataset.u)" data-u="' + uJson + '">'
+      + '<div style="position:relative;flex-shrink:0">'
+      + (picHtml || '<div class="g-avatar" style="background:' + color + '">' + initials + '</div>')
+      + badge
+      + '</div>'
+      + '<div class="g-account-info">'
+      + '<div class="g-account-name">' + escH(u.name) + '</div>'
+      + '<div class="g-account-email">' + escH(u.email) + '</div>'
+      + '</div>'
+      + '<div style="margin-left:auto;color:#5f6368;font-size:11px">' + (u.googleLinked ? 'Google' : 'Local') + '</div>'
+      + '</div>';
+  }).join('');
+  list.innerHTML = html;
+}
+
+
+function signInAs(elOrJson) {
+  const uJson = (typeof elOrJson === 'string') ? elOrJson : elOrJson.dataset.u;
   const u = JSON.parse(uJson);
   closeGooglePopup();
   loginAs(u);
 }
 
-function showNewAccountForm() {
-  document.getElementById('newAccountForm').style.display='block';
-  document.getElementById('gEmailInput').focus();
+function showGManualForm() {
+  document.getElementById('gManualForm').style.display = 'block';
+  document.getElementById('gNameInput').focus();
 }
 
-function signInWithCustomAccount() {
-  const email = document.getElementById('gEmailInput').value.trim();
+function signInWithManualAccount() {
   const name  = document.getElementById('gNameInput').value.trim();
-  if(!email||!name) { Sound.error(); return; }
-  if(!email.includes('@')) { Sound.error(); return; }
-  const user = {id: btoa(email).replace(/=/g,''), name, email};
+  const email = document.getElementById('gEmailInput').value.trim();
+  if(!name){ document.getElementById('gNameInput').style.borderColor='#ea4335'; return; }
+  if(!email || !email.includes('@')){ document.getElementById('gEmailInput').style.borderColor='#ea4335'; return; }
+  const user = {
+    id: btoa(unescape(encodeURIComponent(email))).replace(/[+/=]/g,''),
+    name, email, googleLinked: false,
+  };
   closeGooglePopup();
-  loginAs(user);
+  loginAs(user, true);
 }
 
 function startDemo() {
   Sound.init(); Sound.click();
-  loginAs({id:'demo_user', name:'Demo User', email:'demo@dailyfuse.app'}, true);
+  loginAs({id:'demo_user_001', name:'Demo User', email:'demo@dailyfuse.app', googleLinked:false}, true);
 }
 
 function loginAs(user, isNew=false) {
@@ -1459,24 +1638,195 @@ function loginAs(user, isNew=false) {
   currentUser = user;
   saveKnownAccount(user);
   loadDB();
-  if(isNew && db.goals.length===0) seedGoals();
+  if(db.goals.length===0) seedGoals();
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('appShell').classList.remove('hidden');
   setupUI();
   Sound.login();
-  showToast(`Welcome back, ${user.name.split(' ')[0]}! 👋`,'success');
+  const firstName = user.name.split(' ')[0];
+  showToast(`Welcome${isNew?'':' back'}, ${firstName}! 👋`, 'success');
+  /* Schedule email checks */
+  scheduleEmailChecks();
 }
 
 function logout() {
   Sound.click();
-  if(!confirm('Sign out?')) return;
-  currentUser=null; db=null;
+  if(!confirm('Sign out of DailyFuse?')) return;
+  /* Sign out of Google if applicable */
+  if(typeof google !== 'undefined' && google.accounts) {
+    try { google.accounts.id.disableAutoSelect(); } catch(e){}
+  }
+  currentUser = null; db = null;
   document.getElementById('appShell').classList.add('hidden');
   document.getElementById('loginScreen').classList.remove('hidden');
 }
 
+function changeEmailAccount() {
+  startGoogleLogin();
+}
+
 function closeGooglePopup() {
   document.getElementById('googleAuthPopup').classList.remove('open');
+  document.getElementById('gManualForm').style.display = 'none';
+}
+
+/* ────────────────────────────────────────────────────────
+   EMAIL SYSTEM (EmailJS + mailto fallback)
+──────────────────────────────────────────────────────── */
+/* EmailJS public key — users set this up once */
+const EMAILJS_SERVICE = 'dailyfuse_service';
+const EMAILJS_TEMPLATE_REMINDER = 'template_reminder';
+const EMAILJS_TEMPLATE_WEEKLY   = 'template_weekly';
+const EMAILJS_PUBLIC_KEY        = 'your_emailjs_public_key';
+
+function initEmailJS() {
+  if(typeof emailjs !== 'undefined') {
+    try { emailjs.init(EMAILJS_PUBLIC_KEY); } catch(e){}
+  }
+}
+
+function buildEmailHTML(type) {
+  const user = currentUser;
+  const today = todayStr();
+  const activeGoals = getActiveGoals();
+  const done = activeGoals.filter(g => getGoalStatus(g).done);
+  const streak = computeStreak();
+  const pct = activeGoals.length ? Math.round(done.length/activeGoals.length*100) : 0;
+  const goalRows = activeGoals.map(g => {
+    const cat = CATS.find(c=>c.id===g.category)||CATS[0];
+    const st = getGoalStatus(g);
+    return `<tr>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${g.color||cat.color};margin-right:8px"></span>
+        ${g.title}
+      </td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:center">
+        ${st.done ? '✅ Done' : `${Math.round(st.prog*100)}%`}
+      </td>
+    </tr>`;
+  }).join('');
+
+  return `<!DOCTYPE html>
+<html><body style="margin:0;padding:0;background:#f4f4f5;font-family:'Helvetica Neue',Arial,sans-serif">
+<div style="max-width:560px;margin:30px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08)">
+  <div style="background:linear-gradient(135deg,#1a1f36 0%,#0d1219 100%);padding:32px 36px">
+    <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px">DailyFuse</div>
+    <div style="font-size:13px;color:#8b97b8;margin-top:4px">${type==='daily'?'Your daily goal reminder':'Weekly progress summary'}</div>
+  </div>
+  <div style="padding:28px 36px">
+    <h2 style="font-size:18px;font-weight:700;color:#1a2035;margin:0 0 6px">
+      ${type==='daily'?`Good morning, ${user.name.split(' ')[0]}! ☀️`:`Weekly recap, ${user.name.split(' ')[0]}! 📊`}
+    </h2>
+    <p style="color:#6b7a99;font-size:14px;margin:0 0 20px">
+      ${type==='daily'
+        ? `You have <b style="color:#1a2035">${activeGoals.length} goals</b> scheduled for today. Let's crush them!`
+        : `You were active on <b style="color:#1a2035">${streak} days</b> this week. Keep the streak alive!`}
+    </p>
+    ${activeGoals.length ? `
+    <div style="background:#f8f9fc;border-radius:10px;overflow:hidden;margin-bottom:20px">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#eef0f7">
+          <th style="padding:10px 12px;text-align:left;color:#6b7a99;font-weight:600">Goal</th>
+          <th style="padding:10px 12px;text-align:center;color:#6b7a99;font-weight:600">Status</th>
+        </tr></thead>
+        <tbody>${goalRows}</tbody>
+      </table>
+    </div>` : ''}
+    <div style="display:flex;gap:12px;margin-bottom:24px">
+      <div style="flex:1;background:rgba(124,109,240,0.08);border:1px solid rgba(124,109,240,0.2);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:26px;font-weight:800;color:#7c6df0">${pct}%</div>
+        <div style="font-size:11px;color:#8b97b8;margin-top:2px">Today's Progress</div>
+      </div>
+      <div style="flex:1;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:26px;font-weight:800;color:#10b981">${streak}</div>
+        <div style="font-size:11px;color:#8b97b8;margin-top:2px">Day Streak 🔥</div>
+      </div>
+    </div>
+    <a href="#" style="display:block;text-align:center;background:#7c6df0;color:#fff;text-decoration:none;padding:13px 24px;border-radius:10px;font-weight:600;font-size:14px">Open DailyFuse →</a>
+  </div>
+  <div style="padding:16px 36px;background:#f8f9fc;border-top:1px solid #eef0f7">
+    <p style="font-size:11px;color:#9ba3b8;margin:0;text-align:center">
+      Sent to ${user.email} | <a href="#" style="color:#7c6df0">Manage preferences</a> | <a href="#" style="color:#7c6df0">Unsubscribe</a>
+    </p>
+  </div>
+</div>
+</body></html>`;
+}
+
+function sendReminderEmail(type='daily') {
+  if(!currentUser || !currentUser.email || currentUser.email.includes('demo@')) return;
+  const html = buildEmailHTML(type);
+  /* Try EmailJS first */
+  if(typeof emailjs !== 'undefined') {
+    emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_REMINDER, {
+      to_email: currentUser.email,
+      to_name: currentUser.name,
+      subject: type==='daily' ? `Your DailyFuse goals for today 🎯` : `Weekly progress report 📊`,
+      message_html: html,
+    }).then(()=>{
+      showToast('Reminder sent to ' + currentUser.email, 'success');
+    }).catch(()=>{
+      /* Fallback: mailto */
+      mailtoFallback(type, html);
+    });
+  } else {
+    mailtoFallback(type, html);
+  }
+}
+
+function mailtoFallback(type, html) {
+  /* Open native mail client as fallback */
+  const subject = encodeURIComponent(type==='daily' ? 'DailyFuse: Your goals for today' : 'DailyFuse: Weekly summary');
+  const body = encodeURIComponent('Hi '+currentUser.name+',\n\nHere are your goals for today:\n\n'+getActiveGoals().map(function(g){return '- '+g.title;}).join('\n')+'\n\nKeep up the great work!\n\n- DailyFuse');
+  window.open(`mailto:${currentUser.email}?subject=${subject}&body=${body}`);
+  showToast('Opening your email client...', 'success');
+}
+
+function sendTestEmail() {
+  if(!currentUser) return;
+  Sound.click();
+  sendReminderEmail('daily');
+}
+
+function scheduleEmailChecks() {
+  /* Check every minute if it's time to send a reminder */
+  if(window._emailCheckInterval) clearInterval(window._emailCheckInterval);
+  window._emailCheckInterval = setInterval(()=>{
+    const remPrefs = getRemPrefs();
+    if(!remPrefs.morning) return;
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const lastSent = localStorage.getItem(`df_lastReminder_${todayStr()}`);
+    if(timeStr === remPrefs.time && !lastSent) {
+      localStorage.setItem(`df_lastReminder_${todayStr()}`, '1');
+      sendReminderEmail('daily');
+    }
+  }, 60000);
+}
+
+function getRemPrefs() {
+  try { return JSON.parse(localStorage.getItem(`df_remprefs_${currentUser?.id}`)||'{}'); } catch(e){ return {}; }
+}
+function saveReminderPrefs() {
+  if(!currentUser) return;
+  const p = {
+    time: document.getElementById('reminderTime')?.value || '08:00',
+    morning: document.getElementById('togRemMorning')?.classList.contains('on'),
+    weekly: document.getElementById('togRemWeekly')?.classList.contains('on'),
+    complete: document.getElementById('togRemComplete')?.classList.contains('on'),
+    streak: document.getElementById('togRemStreak')?.classList.contains('on'),
+  };
+  localStorage.setItem(`df_remprefs_${currentUser.id}`, JSON.stringify(p));
+}
+function renderRemindersPage() {
+  if(!currentUser) return;
+  document.getElementById('reminderUserEmail').textContent = `Connected: ${currentUser.email}`;
+  document.getElementById('emailAccountDisplay').textContent = `${currentUser.name} - ${currentUser.email}`;
+  const remPrefs = getRemPrefs();
+  if(document.getElementById('reminderTime')) document.getElementById('reminderTime').value = remPrefs.time || '08:00';
+  /* Render email preview */
+  const previewEl = document.getElementById('emailPreviewBox');
+  if(previewEl) previewEl.innerHTML = buildEmailHTML('daily');
 }
 
 /* ────────────────────────────────────────────────────────
@@ -1484,17 +1834,24 @@ function closeGooglePopup() {
 ──────────────────────────────────────────────────────── */
 function setupUI() {
   applyPrefs();
-  // User info in sidebar
+  initEmailJS();
   const ACOLORS=['#7c6df0','#3B82F6','#10B981','#F59E0B','#EF4444','#EC4899'];
   const ac = ACOLORS[currentUser.name.charCodeAt(0)%ACOLORS.length];
   const av=document.getElementById('sidebarAvatar');
-  av.style.background=ac; av.textContent=currentUser.name[0].toUpperCase();
+  if(currentUser.picture){
+    av.style.background='transparent';
+    const img = document.createElement('img');
+    img.src = currentUser.picture;
+    img.style.cssText = 'width:32px;height:32px;border-radius:50%;object-fit:cover';
+    img.onerror = function(){ av.style.background=ac; av.textContent=currentUser.name[0].toUpperCase(); this.remove(); };
+    av.innerHTML=''; av.appendChild(img);
+  } else {
+    av.style.background=ac; av.textContent=currentUser.name[0].toUpperCase();
+  }
   document.getElementById('sidebarName').textContent=currentUser.name;
   document.getElementById('sidebarEmail').textContent=currentUser.email;
-  // Build theme/customization panel
   buildCustomPanel();
   render();
-  // Start mini timer display
   renderMiniTimer();
 }
 
@@ -1523,6 +1880,7 @@ function navTo(page, el) {
   else if(page==='heatmap') renderHeatmap();
   else if(page==='report') renderReportPreview();
   else if(page==='goals') renderAllGoals();
+  else if(page==='reminders') renderRemindersPage();
   else render();
 }
 
@@ -2245,7 +2603,7 @@ function renderCmdResults(q) {
       const color=g.color||cat.color;
       return `<div class="cmd-result" onclick="quickCI('${g.id}');closeCmdPalette()">
         <div class="cmd-result-icon" style="background:${color}18;border-color:${color}40;color:${color}">${cat.emoji}</div>
-        <div><div class="cmd-result-name">${escH(g.title)}</div><div class="cmd-result-sub">Quick check-in · ${cat.name}</div></div>
+        <div><div class="cmd-result-name">${escH(g.title)}</div><div class="cmd-result-sub">Quick check-in - ${cat.name}</div></div>
       </div>`;
     }).join('');
   }
@@ -2405,11 +2763,13 @@ BgCanvas.init();
 Particles.init();
 document.getElementById('appShell').classList.add('hidden');
 
-// Auto-login if we have stored accounts
-const knownAccounts = getKnownAccounts();
-if(knownAccounts.length){
-  // Pre-populate the Google popup with known accounts
-}
+/* Init Google Sign-In once the GSI script loads */
+window.onGoogleSignIn = handleGoogleCredential;
+if(typeof google !== 'undefined') initGoogleSignIn();
+document.addEventListener('DOMContentLoaded', ()=>{
+  /* Try again after DOM ready */
+  setTimeout(initGoogleSignIn, 1500);
+});
 </script>
 </body>
 </html>
