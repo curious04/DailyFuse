@@ -797,6 +797,10 @@ body{
     <div id="gOneTapWrap" style="padding:12px 24px;display:none">
       <div id="g_id_signin_btn"></div>
     </div>
+    <!-- Shown when GOOGLE_CLIENT_ID not configured -->
+    <div id="gConfigNote" style="display:none;margin:0 24px 12px;background:#fef3cd;border:1px solid #ffd07b;border-radius:8px;padding:10px 14px;font-size:12px;color:#7a5a00">
+      <b>Dev notice:</b> Google OAuth not configured. Add your <code>GOOGLE_CLIENT_ID</code> to enable real Google sign-in. Use "another account" below for now.
+    </div>
 
     <!-- Manual email form -->
     <div id="gManualForm" style="display:none;padding:0 24px 12px">
@@ -1514,22 +1518,46 @@ function addCheckin(goalId,value,note) {
 /* ────────────────────────────────────────────────────────
    GOOGLE OAUTH + AUTH SYSTEM
 ──────────────────────────────────────────────────────── */
-const GOOGLE_CLIENT_ID = ''; // Not needed for localStorage-based auth
+/* ╔══════════════════════════════════════════════════════════╗
+   ║           DAILYFUSE CONFIGURATION — EDIT THESE           ║
+   ║  See README.md for full setup guide                      ║
+   ╚══════════════════════════════════════════════════════════╝ */
+const CONFIG = {
+  /* 1. Google OAuth — from Google Cloud Console
+        https://console.cloud.google.com/apis/credentials        */
+  GOOGLE_CLIENT_ID: '%%GOOGLE_CLIENT_ID%%',
+
+  /* 2. EmailJS — from https://emailjs.com (free: 200 emails/mo)
+        Service ID, Template IDs, and Public Key               */
+  EMAILJS_PUBLIC_KEY:       '%%EMAILJS_PUBLIC_KEY%%',
+  EMAILJS_SERVICE_ID:       '%%EMAILJS_SERVICE_ID%%',
+  EMAILJS_TEMPLATE_DAILY:   '%%EMAILJS_TEMPLATE_DAILY%%',
+  EMAILJS_TEMPLATE_WEEKLY:  '%%EMAILJS_TEMPLATE_WEEKLY%%',
+};
+/* End of config — no other edits needed below */
+const GOOGLE_CLIENT_ID = CONFIG.GOOGLE_CLIENT_ID
 const AVATAR_COLORS = ['#4285F4','#EA4335','#34A853','#FBBC05','#9C27B0','#00BCD4','#FF6D00','#00897B'];
 
 /* Initialize Google Identity Services when available */
 function initGoogleSignIn() {
   if(typeof google === 'undefined' || !google.accounts) return;
+  const cid = CONFIG.GOOGLE_CLIENT_ID;
+  if(!cid || cid.includes('%%') || cid === '') {
+    console.info('DailyFuse: Google Client ID not configured. Using local accounts only.');
+    return;
+  }
   try {
     google.accounts.id.initialize({
-      client_id: '473827423941-example.apps.googleusercontent.com', // demo client id
+      client_id: cid,
       callback: handleGoogleCredential,
       auto_select: false,
       cancel_on_tap_outside: true,
       context: 'signin',
+      ux_mode: 'popup',
     });
+    window._googleReady = true;
   } catch(e) {
-    console.warn('Google Sign-In not available:', e);
+    console.warn('Google Sign-In init failed:', e.message);
   }
 }
 
@@ -1557,24 +1585,32 @@ function startGoogleLogin() {
   const popup = document.getElementById('googleAuthPopup');
   popup.classList.add('open');
   document.getElementById('gManualForm').style.display = 'none';
-  document.getElementById('gOneTapWrap').style.display = 'none';
+  const oneTapWrap = document.getElementById('gOneTapWrap');
+  const hasGoogleConfig = CONFIG.GOOGLE_CLIENT_ID && !CONFIG.GOOGLE_CLIENT_ID.includes('%%') && CONFIG.GOOGLE_CLIENT_ID !== '';
 
   /* Render saved accounts */
   renderSavedAccounts();
 
-  /* Try to render Google button */
-  setTimeout(() => {
-    if(typeof google !== 'undefined' && google.accounts) {
+  /* Render Google button only if config is present */
+  if(hasGoogleConfig && window._googleReady) {
+    oneTapWrap.style.display = 'block';
+    setTimeout(() => {
       try {
-        document.getElementById('gOneTapWrap').style.display = 'block';
         document.getElementById('g_id_signin_btn').innerHTML = '';
         google.accounts.id.renderButton(
           document.getElementById('g_id_signin_btn'),
           { theme:'outline', size:'large', width:312, text:'continue_with', shape:'rectangular', logo_alignment:'left' }
         );
-      } catch(e) { /* Google API not ready */ }
+      } catch(e) { oneTapWrap.style.display = 'none'; }
+    }, 100);
+  } else {
+    oneTapWrap.style.display = 'none';
+    /* Show info if no Google config */
+    if(!hasGoogleConfig) {
+      const note = document.getElementById('gConfigNote');
+      if(note) note.style.display = 'block';
     }
-  }, 300);
+  }
 }
 
 function renderSavedAccounts() {
@@ -1674,10 +1710,11 @@ function closeGooglePopup() {
    EMAIL SYSTEM (EmailJS + mailto fallback)
 ──────────────────────────────────────────────────────── */
 /* EmailJS public key — users set this up once */
-const EMAILJS_SERVICE = 'dailyfuse_service';
-const EMAILJS_TEMPLATE_REMINDER = 'template_reminder';
-const EMAILJS_TEMPLATE_WEEKLY   = 'template_weekly';
-const EMAILJS_PUBLIC_KEY        = 'your_emailjs_public_key';
+// EmailJS config aliases (from CONFIG above)
+const EMAILJS_SERVICE           = CONFIG.EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_REMINDER = CONFIG.EMAILJS_TEMPLATE_DAILY;
+const EMAILJS_TEMPLATE_WEEKLY   = CONFIG.EMAILJS_TEMPLATE_WEEKLY;
+const EMAILJS_PUBLIC_KEY        = CONFIG.EMAILJS_PUBLIC_KEY;
 
 function initEmailJS() {
   if(typeof emailjs !== 'undefined') {
