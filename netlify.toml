@@ -1,0 +1,29 @@
+# netlify.toml
+# Netlify reads this file for build settings.
+# Set your environment variables in Netlify Dashboard → Site config → Environment variables
+
+[build]
+  # Run the build script that injects env vars
+  command = "node build.js"
+  # Serve files from dist/ folder
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# Redirect all routes to index.html (single page app)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Allow Google Identity Services
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://cdn.emailjs.com https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https: lh3.googleusercontent.com; connect-src 'self' https://api.emailjs.com https://accounts.google.com;"
