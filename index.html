@@ -744,6 +744,176 @@ body{
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ─── STRAVA INTEGRATION ─────────────────────────────────────────────── */
+.strava-connect-card{
+  background:linear-gradient(135deg,rgba(252,76,2,0.12) 0%,transparent 100%);
+  border:1px solid rgba(252,76,2,0.3);border-radius:20px;padding:36px;
+  text-align:center;margin-bottom:24px;position:relative;overflow:hidden;
+}
+.strava-connect-card::before{
+  content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;
+  border-radius:50%;background:radial-gradient(circle,rgba(252,76,2,0.15),transparent 70%);
+}
+.strava-logo{
+  font-family:'Outfit',sans-serif;font-weight:900;font-size:28px;
+  color:#FC4C02;letter-spacing:-1px;margin-bottom:8px;
+}
+.strava-connect-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:#FC4C02;color:#fff;border:none;border-radius:10px;
+  padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  transition:all 0.2s;box-shadow:0 4px 20px rgba(252,76,2,0.4);
+  text-decoration:none;
+}
+.strava-connect-btn:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 8px 30px rgba(252,76,2,0.5)}
+.strava-connect-btn:active{transform:translateY(0)}
+.strava-disconnect-btn{
+  background:transparent;border:1px solid rgba(252,76,2,0.3);color:#FC4C02;
+  border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.15s;
+}
+.strava-disconnect-btn:hover{background:rgba(252,76,2,0.1)}
+
+/* Athlete hero */
+.strava-athlete{
+  display:flex;align-items:center;gap:16px;margin-bottom:24px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;
+}
+.strava-avatar{width:56px;height:56px;border-radius:50%;border:3px solid #FC4C02;flex-shrink:0;object-fit:cover}
+.strava-avatar-placeholder{
+  width:56px;height:56px;border-radius:50%;background:#FC4C02;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.strava-athlete-name{font-family:'Outfit',sans-serif;font-size:20px;font-weight:800}
+.strava-athlete-loc{font-size:12px;color:var(--text2);margin-top:3px}
+.strava-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(252,76,2,0.12);border:1px solid rgba(252,76,2,0.25);
+  color:#FC4C02;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;
+  margin-top:6px;
+}
+
+/* Stats grid */
+.strava-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.strava-stat{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;
+  transition:all 0.2s;cursor:default;
+}
+.strava-stat:hover{border-color:rgba(252,76,2,0.4);transform:translateY(-2px)}
+.strava-stat-val{font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#FC4C02;line-height:1;margin-bottom:4px}
+.strava-stat-lbl{font-size:11px;color:var(--text2);font-weight:500}
+.strava-stat-sub{font-size:10px;color:var(--text3);margin-top:2px;font-family:'Fira Code',monospace}
+
+/* Weekly chart */
+.strava-chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:18px}
+.strava-chart-title{font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.weekly-bars{display:flex;align-items:flex-end;gap:6px;height:80px}
+.wbar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.wbar{
+  width:100%;border-radius:4px 4px 0 0;min-height:4px;
+  background:rgba(252,76,2,0.2);position:relative;
+  transition:height 0.8s cubic-bezier(0.175,0.885,0.32,1.275);cursor:pointer;
+}
+.wbar.active{background:#FC4C02}
+.wbar.today{background:#FC4C02;box-shadow:0 0 12px rgba(252,76,2,0.5)}
+.wbar-val{
+  position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  font-size:9px;font-family:'Fira Code',monospace;color:var(--text2);white-space:nowrap;
+  opacity:0;transition:opacity 0.15s;
+}
+.wbar:hover .wbar-val{opacity:1}
+.wbar-day{font-size:9px;color:var(--text3);font-family:'Fira Code',monospace}
+
+/* Pace chart */
+.pace-line{position:relative;height:60px;margin-top:8px}
+.pace-svg{width:100%;height:60px;overflow:visible}
+
+/* Activity cards */
+.activity-list{display:flex;flex-direction:column;gap:10px}
+.activity-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  padding:16px 18px;transition:all 0.2s;cursor:pointer;
+  animation:goalIn 0.35s var(--ease) both;
+  position:relative;overflow:hidden;
+}
+.activity-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#FC4C02;border-radius:3px 0 0 3px}
+.activity-card:hover{border-color:rgba(252,76,2,0.3);background:var(--bg3);transform:translateX(3px)}
+.activity-type-icon{
+  width:36px;height:36px;border-radius:8px;flex-shrink:0;
+  background:rgba(252,76,2,0.12);border:1px solid rgba(252,76,2,0.2);
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+}
+.activity-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.activity-meta{display:flex;gap:12px;flex-wrap:wrap}
+.activity-chip{
+  display:flex;align-items:center;gap:4px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:5px;padding:2px 8px;font-size:11px;font-family:'Fira Code',monospace;
+  color:var(--text2);
+}
+.activity-chip.highlight{background:rgba(252,76,2,0.1);border-color:rgba(252,76,2,0.25);color:#FC4C02}
+
+/* PR badges */
+.pr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.pr-card{
+  background:linear-gradient(135deg,var(--bg2),var(--bg3));
+  border:1px solid var(--border);border-radius:12px;padding:16px;
+  text-align:center;transition:all 0.2s;
+}
+.pr-card:hover{border-color:rgba(252,76,2,0.35);transform:translateY(-2px)}
+.pr-medal{font-size:26px;margin-bottom:6px}
+.pr-val{font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;color:#FC4C02}
+.pr-lbl{font-size:11px;color:var(--text2);margin-top:2px}
+.pr-date{font-size:10px;color:var(--text3);font-family:'Fira Code',monospace;margin-top:3px}
+
+/* Motivational banner */
+.motive-banner{
+  border-radius:14px;padding:20px 22px;margin-bottom:24px;
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(252,76,2,0.15),rgba(252,76,2,0.05));
+  border:1px solid rgba(252,76,2,0.25);
+}
+.motive-banner::after{
+  content:'';position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+  font-size:80px;opacity:0.06;
+}
+.motive-label{font-size:10px;color:#FC4C02;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+.motive-text{font-family:'Outfit',sans-serif;font-size:17px;font-weight:700;line-height:1.4}
+.motive-sub{font-size:12px;color:var(--text2);margin-top:6px}
+
+/* Streak ticker */
+.run-streak{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:14px 18px;margin-bottom:18px;
+}
+.run-streak-num{font-family:'Outfit',sans-serif;font-size:32px;font-weight:900;color:#FC4C02;line-height:1}
+.run-streak-dots{display:flex;gap:4px;flex-wrap:wrap;max-width:160px}
+.rs-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;transition:background 0.3s}
+.rs-dot.active{background:#FC4C02}
+.rs-dot.today{background:#FC4C02;box-shadow:0 0 6px rgba(252,76,2,0.7);animation:pulse 1.5s ease-in-out infinite}
+
+/* Loading spinner */
+.strava-loading{display:flex;flex-direction:column;align-items:center;padding:48px;gap:16px;color:var(--text2)}
+.spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:#FC4C02;border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Tab switcher */
+.strava-tabs{display:flex;gap:4px;background:var(--bg2);border-radius:10px;padding:4px;margin-bottom:20px;border:1px solid var(--border)}
+.strava-tab{
+  flex:1;padding:7px;border-radius:7px;font-size:12px;font-weight:600;
+  cursor:pointer;text-align:center;transition:all 0.15s;color:var(--text2);
+}
+.strava-tab.active{background:var(--bg0);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+
+@media(max-width:768px){
+  .strava-stats{grid-template-columns:repeat(2,1fr)}
+  .pr-grid{grid-template-columns:repeat(2,1fr)}
+}
+
 </style>
 </head>
 <body>
@@ -874,6 +1044,10 @@ body{
     <div class="nav-item" onclick="navTo('reminders',this)" data-page="reminders">
       <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
       <span>Reminders</span>
+    </div>
+    <div class="nav-item" onclick="navTo('strava',this)" data-page="strava" id="stravaNavItem">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+      <span>Strava</span>
     </div>
     <div class="nav-item" onclick="openCustomPanel()">
       <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></span>
@@ -1075,6 +1249,129 @@ body{
         <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;margin-bottom:6px">Email Preview</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:16px">This is what your daily reminder looks like</div>
         <div id="emailPreviewBox" style="background:#fff;border-radius:10px;overflow:hidden;border:1px solid var(--border2)"></div>
+      </div>
+    </div>
+
+    <!-- STRAVA PAGE -->
+    <div class="page" id="page-strava">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Strava</div>
+          <div class="page-sub" id="stravaPageSub">Connect your account to see your running journey</div>
+        </div>
+        <div class="header-actions" id="stravaHeaderActions"></div>
+      </div>
+
+      <!-- Not connected state -->
+      <div id="stravaNotConnected">
+        <div class="strava-connect-card">
+          <div style="font-size:52px;margin-bottom:12px">🏃</div>
+          <div class="strava-logo">Strava</div>
+          <div style="font-size:14px;color:var(--text2);margin-bottom:24px;line-height:1.6;max-width:360px;margin-left:auto;margin-right:auto">
+            Connect Strava to visualize your runs, track PRs, and get motivated to push further every day.
+          </div>
+          <a id="stravaOAuthBtn" href="#" class="strava-connect-btn" onclick="connectStrava(event)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+            Connect with Strava
+          </a>
+          <div style="margin-top:20px;font-size:11px;color:var(--text3)">
+            We only read your activity data. We never post on your behalf.
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+          <div class="card" style="padding:20px;text-align:center">
+            <div style="font-size:28px;margin-bottom:8px">📊</div>
+            <div style="font-weight:600;font-size:13px;margin-bottom:4px">Activity Stats</div>
+            <div style="font-size:11px;color:var(--text2)">Distance, pace, elevation for every run</div>
+          </div>
+          <div class="card" style="padding:20px;text-align:center">
+            <div style="font-size:28px;margin-bottom:8px">🏆</div>
+            <div style="font-weight:600;font-size:13px;margin-bottom:4px">Personal Records</div>
+            <div style="font-size:11px;color:var(--text2)">5K, 10K, half marathon, marathon PRs</div>
+          </div>
+          <div class="card" style="padding:20px;text-align:center">
+            <div style="font-size:28px;margin-bottom:8px">🔥</div>
+            <div style="font-weight:600;font-size:13px;margin-bottom:4px">Running Streaks</div>
+            <div style="font-size:11px;color:var(--text2)">Stay consistent with streak tracking</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connected state -->
+      <div id="stravaConnected" style="display:none">
+
+        <!-- Loading -->
+        <div id="stravaLoading" class="strava-loading" style="display:none">
+          <div class="spin"></div>
+          <div>Loading your Strava data...</div>
+        </div>
+
+        <!-- Athlete profile -->
+        <div id="stravaAthlete" style="display:none">
+
+          <!-- Athlete hero -->
+          <div class="strava-athlete" id="stravaAthleteCard"></div>
+
+          <!-- Motivation banner -->
+          <div class="motive-banner" id="motiveBanner">
+            <div class="motive-label">Your Coach Says</div>
+            <div class="motive-text" id="motiveText">Loading your stats...</div>
+            <div class="motive-sub" id="motiveSub"></div>
+          </div>
+
+          <!-- Run streak -->
+          <div class="run-streak" id="runStreak"></div>
+
+          <!-- Tabs -->
+          <div class="strava-tabs">
+            <div class="strava-tab active" onclick="switchStravaTab('overview',this)">Overview</div>
+            <div class="strava-tab" onclick="switchStravaTab('activities',this)">Activities</div>
+            <div class="strava-tab" onclick="switchStravaTab('records',this)">Records</div>
+          </div>
+
+          <!-- OVERVIEW TAB -->
+          <div id="stravaTabOverview">
+            <div class="strava-stats" id="stravaStatsGrid"></div>
+
+            <div class="strava-chart-card">
+              <div class="strava-chart-title">
+                <span>Weekly Mileage (last 8 weeks)</span>
+                <span id="weeklyAvgLbl" style="font-size:11px;font-weight:400;color:var(--text2)"></span>
+              </div>
+              <div class="weekly-bars" id="weeklyBars"></div>
+              <div style="display:flex;gap:6px;margin-top:8px" id="weeklyLabels"></div>
+            </div>
+
+            <div class="strava-chart-card">
+              <div class="strava-chart-title">
+                <span>Pace Trend (last 20 runs)</span>
+                <span id="paceAvgLbl" style="font-size:11px;font-weight:400;color:var(--text2)"></span>
+              </div>
+              <div class="pace-line">
+                <svg class="pace-svg" id="paceSvg" viewBox="0 0 400 60" preserveAspectRatio="none"></svg>
+              </div>
+              <div style="font-size:10px;color:var(--text3);margin-top:4px;font-family:Fira Code,monospace">min/km — lower is faster</div>
+            </div>
+          </div>
+
+          <!-- ACTIVITIES TAB -->
+          <div id="stravaTabActivities" style="display:none">
+            <div class="activity-list" id="activityList"></div>
+            <div id="loadMoreWrap" style="text-align:center;margin-top:16px;display:none">
+              <button class="btn btn-ghost" onclick="loadMoreActivities()">Load more activities</button>
+            </div>
+          </div>
+
+          <!-- RECORDS TAB -->
+          <div id="stravaTabRecords" style="display:none">
+            <div class="pr-grid" id="prGrid"></div>
+            <div class="strava-chart-card" id="yearProgressCard">
+              <div class="strava-chart-title">Year Progress</div>
+              <div id="yearProgress"></div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </main>
@@ -1533,6 +1830,11 @@ const CONFIG = {
   EMAILJS_SERVICE_ID:       '%%EMAILJS_SERVICE_ID%%',
   EMAILJS_TEMPLATE_DAILY:   '%%EMAILJS_TEMPLATE_DAILY%%',
   EMAILJS_TEMPLATE_WEEKLY:  '%%EMAILJS_TEMPLATE_WEEKLY%%',
+
+  /* 3. Strava — from https://www.strava.com/settings/api
+        Create an app, set Authorization Callback Domain to your Netlify URL */
+  STRAVA_CLIENT_ID:     '%%STRAVA_CLIENT_ID%%',
+  STRAVA_CLIENT_SECRET: '%%STRAVA_CLIENT_SECRET%%',   // kept server-side only
 };
 /* End of config — no other edits needed below */
 const GOOGLE_CLIENT_ID = CONFIG.GOOGLE_CLIENT_ID
@@ -1918,6 +2220,7 @@ function navTo(page, el) {
   else if(page==='report') renderReportPreview();
   else if(page==='goals') renderAllGoals();
   else if(page==='reminders') renderRemindersPage();
+  else if(page==='strava') renderStravaPage();
   else render();
 }
 
@@ -2791,6 +3094,582 @@ document.getElementById('gEmailInput')?.addEventListener('keydown',e=>{if(e.key=
 ──────────────────────────────────────────────────────── */
 function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+/* ════════════════════════════════════════════════════════════
+   STRAVA INTEGRATION ENGINE
+════════════════════════════════════════════════════════════ */
+
+const STRAVA_SCOPES  = 'activity:read_all,profile:read_all';
+const STRAVA_API     = 'https://www.strava.com/api/v3';
+
+/* ── Storage helpers ── */
+function stravaKey() { return 'df_strava_' + (currentUser ? currentUser.id : 'anon'); }
+function saveStravaToken(data) { localStorage.setItem(stravaKey(), JSON.stringify(data)); }
+function loadStravaToken() {
+  try { return JSON.parse(localStorage.getItem(stravaKey()) || 'null'); } catch(e) { return null; }
+}
+function clearStravaToken() { localStorage.removeItem(stravaKey()); }
+function stravaActivityKey() { return 'df_strava_acts_' + (currentUser ? currentUser.id : 'anon'); }
+function saveActivities(acts) { try { localStorage.setItem(stravaActivityKey(), JSON.stringify(acts)); } catch(e){} }
+function loadActivities() { try { return JSON.parse(localStorage.getItem(stravaActivityKey()) || 'null'); } catch(e) { return null; } }
+
+/* ── OAuth connect ── */
+function connectStrava(e) {
+  if(e) e.preventDefault();
+  const clientId = CONFIG.STRAVA_CLIENT_ID;
+  if(!clientId || clientId.includes('%%')) {
+    showToast('Strava Client ID not configured yet. See SETUP.md', 'error');
+    return;
+  }
+  const redirect = encodeURIComponent(window.location.origin + window.location.pathname);
+  const url = 'https://www.strava.com/oauth/authorize'
+    + '?client_id=' + clientId
+    + '&redirect_uri=' + redirect
+    + '&response_type=code'
+    + '&approval_prompt=force'
+    + '&scope=' + STRAVA_SCOPES;
+  localStorage.setItem('df_strava_return', 'strava');
+  window.location.href = url;
+}
+
+function disconnectStrava() {
+  if(!confirm('Disconnect Strava?')) return;
+  clearStravaToken();
+  localStorage.removeItem(stravaActivityKey());
+  renderStravaPage();
+  showToast('Strava disconnected', 'success');
+}
+
+/* ── Handle OAuth callback (code in URL) ── */
+async function handleStravaCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const scope = params.get('scope');
+  if(!code) return false;
+  /* Clean URL */
+  window.history.replaceState({}, '', window.location.pathname);
+  showStravaLoading(true);
+  try {
+    /* Exchange code via Netlify function */
+    const resp = await fetch('/.netlify/functions/strava-token', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ code, grant_type: 'authorization_code' })
+    });
+    if(!resp.ok) throw new Error('Token exchange failed: ' + resp.status);
+    const data = await resp.json();
+    saveStravaToken({
+      access_token:  data.access_token,
+      refresh_token: data.refresh_token,
+      expires_at:    data.expires_at,
+      athlete:       data.athlete,
+    });
+    Sound.complete();
+    showToast('Strava connected! Loading your activities...', 'success');
+    await fetchStravaActivities(data.access_token, true);
+    return true;
+  } catch(err) {
+    console.error('Strava auth error:', err);
+    showToast('Strava connection failed. Check your setup.', 'error');
+    showStravaLoading(false);
+    return false;
+  }
+}
+
+/* ── Refresh token if expired ── */
+async function ensureFreshToken() {
+  const token = loadStravaToken();
+  if(!token) return null;
+  const now = Math.floor(Date.now() / 1000);
+  if(token.expires_at > now + 300) return token.access_token;
+  /* Refresh */
+  try {
+    const resp = await fetch('/.netlify/functions/strava-token', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ refresh_token: token.refresh_token, grant_type: 'refresh_token' })
+    });
+    if(!resp.ok) throw new Error('Refresh failed');
+    const data = await resp.json();
+    const updated = { ...token, access_token: data.access_token, expires_at: data.expires_at };
+    if(data.refresh_token) updated.refresh_token = data.refresh_token;
+    saveStravaToken(updated);
+    return data.access_token;
+  } catch(e) {
+    clearStravaToken();
+    return null;
+  }
+}
+
+/* ── Fetch activities from Strava API ── */
+let stravaActivities = [];
+let stravaPage = 1;
+
+async function fetchStravaActivities(accessToken, reset) {
+  if(reset) { stravaPage = 1; stravaActivities = []; }
+  showStravaLoading(true);
+  try {
+    const url = STRAVA_API + '/athlete/activities?per_page=30&page=' + stravaPage;
+    const resp = await fetch(url, { headers: { 'Authorization': 'Bearer ' + accessToken } });
+    if(!resp.ok) throw new Error('Activities fetch failed: ' + resp.status);
+    const acts = await resp.json();
+    stravaActivities = stravaActivities.concat(acts);
+    saveActivities(stravaActivities);
+    stravaPage++;
+    document.getElementById('loadMoreWrap').style.display = acts.length === 30 ? 'block' : 'none';
+  } catch(e) {
+    console.error('Strava fetch error:', e);
+    /* Fall back to cached */
+    const cached = loadActivities();
+    if(cached) stravaActivities = cached;
+  }
+  showStravaLoading(false);
+  renderStravaData();
+}
+
+async function loadMoreActivities() {
+  const token = await ensureFreshToken();
+  if(token) await fetchStravaActivities(token, false);
+}
+
+/* ── Main page renderer ── */
+async function renderStravaPage() {
+  const token = loadStravaToken();
+  const notConn = document.getElementById('stravaNotConnected');
+  const conn    = document.getElementById('stravaConnected');
+
+  if(!token) {
+    notConn.style.display = 'block';
+    conn.style.display = 'none';
+    document.getElementById('stravaHeaderActions').innerHTML = '';
+    document.getElementById('stravaPageSub').textContent = 'Connect your account to see your running journey';
+    return;
+  }
+
+  notConn.style.display = 'none';
+  conn.style.display = 'block';
+  document.getElementById('stravaHeaderActions').innerHTML =
+    '<button class="strava-disconnect-btn" onclick="disconnectStrava()">Disconnect</button>';
+
+  /* Load cached activities immediately */
+  const cached = loadActivities();
+  if(cached && cached.length) {
+    stravaActivities = cached;
+    renderStravaData();
+  } else {
+    showStravaLoading(true);
+  }
+
+  /* Refresh token and fetch fresh data */
+  const fresh = await ensureFreshToken();
+  if(fresh) {
+    await fetchStravaActivities(fresh, true);
+  } else {
+    clearStravaToken();
+    renderStravaPage();
+  }
+}
+
+function showStravaLoading(show) {
+  const el = document.getElementById('stravaLoading');
+  const ath = document.getElementById('stravaAthlete');
+  if(el) el.style.display = show ? 'flex' : 'none';
+  if(ath && !show) ath.style.display = 'block';
+}
+
+/* ── Render all data ── */
+function renderStravaData() {
+  const token = loadStravaToken();
+  if(!token) return;
+  const athlete = token.athlete || {};
+  const runs = stravaActivities.filter(function(a) { return a.type === 'Run' || a.sport_type === 'Run'; });
+
+  document.getElementById('stravaPageSub').textContent = 'Welcome back, ' + (athlete.firstname || 'Runner') + '!';
+
+  renderStravaAthlete(athlete, runs);
+  renderMotivation(runs);
+  renderRunStreak(runs);
+  renderStravaStats(runs);
+  renderWeeklyChart(runs);
+  renderPaceChart(runs);
+  renderActivities();
+  renderPRs(runs);
+  renderYearProgress(runs);
+}
+
+/* ── Athlete card ── */
+function renderStravaAthlete(athlete, runs) {
+  const el = document.getElementById('stravaAthleteCard');
+  if(!el) return;
+  const totalKm = (runs.reduce(function(s,a){return s+a.distance;},0)/1000).toFixed(0);
+  const picHtml = athlete.profile && athlete.profile !== 'avatar/athlete/large.png'
+    ? '<img class="strava-avatar" src="' + athlete.profile + '" alt="avatar">'
+    : '<div class="strava-avatar-placeholder">' + ((athlete.firstname||'R')[0]) + '</div>';
+  el.innerHTML = picHtml
+    + '<div style="flex:1">'
+    + '<div class="strava-athlete-name">' + escH((athlete.firstname||'') + ' ' + (athlete.lastname||'')) + '</div>'
+    + '<div class="strava-athlete-loc">' + escH(athlete.city||'') + (athlete.country ? ', '+escH(athlete.country) : '') + '</div>'
+    + '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">'
+    + '<span class="strava-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg> Strava Connected</span>'
+    + '<span class="strava-badge" style="background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:var(--green)">' + totalKm + ' km total</span>'
+    + '<span class="strava-badge" style="background:rgba(124,109,240,0.1);border-color:rgba(124,109,240,0.3);color:var(--primary2)">' + runs.length + ' runs logged</span>'
+    + '</div></div>'
+    + '<button class="btn btn-ghost btn-sm" onclick="refreshStravaData()">Refresh</button>';
+}
+
+async function refreshStravaData() {
+  Sound.click();
+  const token = await ensureFreshToken();
+  if(token) {
+    await fetchStravaActivities(token, true);
+    showToast('Activities refreshed!', 'success');
+  }
+}
+
+/* ── Motivation engine ── */
+function renderMotivation(runs) {
+  const el = document.getElementById('motiveBanner');
+  const textEl = document.getElementById('motiveText');
+  const subEl  = document.getElementById('motiveSub');
+  if(!el) return;
+
+  const thisWeekKm = getWeekKm(runs, 0);
+  const lastWeekKm = getWeekKm(runs, 1);
+  const streak     = getRunStreak(runs);
+  const avgPace    = getAvgPace(runs.slice(0,5));
+  const totalRuns  = runs.length;
+
+  let msg, sub;
+  if(streak >= 7) {
+    msg = streak + '-day running streak! You are absolutely unstoppable.';
+    sub = 'Your consistency is building something extraordinary. Keep it up!';
+  } else if(thisWeekKm > lastWeekKm * 1.1 && lastWeekKm > 0) {
+    const pct = Math.round((thisWeekKm/lastWeekKm - 1)*100);
+    msg = 'Up ' + pct + '% vs last week — you are accelerating!';
+    sub = 'This week: ' + thisWeekKm.toFixed(1) + 'km vs last week: ' + lastWeekKm.toFixed(1) + 'km';
+  } else if(runs.length > 0) {
+    const last = runs[0];
+    const lastKm = (last.distance/1000).toFixed(2);
+    const dayAgo = Math.floor((Date.now() - new Date(last.start_date).getTime()) / 86400000);
+    if(dayAgo === 0) {
+      msg = 'You ran ' + lastKm + 'km today. That is dedication!';
+      sub = 'Your body is getting stronger with every kilometer.';
+    } else if(dayAgo === 1) {
+      msg = "Yesterday's " + lastKm + 'km run is already making you stronger.';
+      sub = "Ready for today's run? Your shoes are waiting.";
+    } else if(dayAgo <= 3) {
+      msg = "It's been " + dayAgo + " days since your last run. Time to lace up!";
+      sub = 'Even a short 2-3km run keeps your streak alive and momentum strong.';
+    } else {
+      msg = 'Your running journey is waiting for its next chapter.';
+      sub = 'Every champion started with a single step. Today is a good day to run.';
+    }
+  } else {
+    msg = 'Your running journey starts with a single step.';
+    sub = 'Connect Strava and log your first run today!';
+  }
+
+  textEl.textContent = msg;
+  subEl.textContent  = sub;
+}
+
+/* ── Run streak dots ── */
+function renderRunStreak(runs) {
+  const el = document.getElementById('runStreak');
+  if(!el) return;
+  const streak = getRunStreak(runs);
+  const last14 = [];
+  for(var i=13;i>=0;i--) {
+    var d = new Date(); d.setDate(d.getDate()-i);
+    var ds = dateStr(d);
+    var ran = runs.some(function(r){ return r.start_date_local && r.start_date_local.slice(0,10)===ds; });
+    last14.push({ds:ds, ran:ran, isToday: i===0});
+  }
+  var dots = last14.map(function(d) {
+    return '<div class="rs-dot ' + (d.ran?'active':'') + ' ' + (d.isToday&&d.ran?'today':'') + '" title="'+d.ds+'"></div>';
+  }).join('');
+
+  el.innerHTML = '<div style="text-align:center;padding-right:16px;border-right:1px solid var(--border)">'
+    + '<div class="run-streak-num">' + streak + '</div>'
+    + '<div style="font-size:10px;color:var(--text2);margin-top:2px">day streak</div>'
+    + '</div>'
+    + '<div style="flex:1">'
+    + '<div style="font-size:12px;font-weight:600;margin-bottom:8px">Last 14 days</div>'
+    + '<div class="run-streak-dots">' + dots + '</div>'
+    + '</div>'
+    + '<div style="text-align:center;padding-left:16px;border-left:1px solid var(--border)">'
+    + '<div style="font-size:22px;font-weight:800;color:#FC4C02;font-family:Outfit,sans-serif">' + getWeekKm(runs,0).toFixed(1) + '</div>'
+    + '<div style="font-size:10px;color:var(--text2)">km this week</div>'
+    + '</div>';
+}
+
+/* ── Stats grid ── */
+function renderStravaStats(runs) {
+  const el = document.getElementById('stravaStatsGrid');
+  if(!el || !runs.length) return;
+  const totalKm   = (runs.reduce(function(s,a){return s+a.distance;},0)/1000).toFixed(1);
+  const totalElev = Math.round(runs.reduce(function(s,a){return s+(a.total_elevation_gain||0);},0));
+  const avgPace   = getAvgPace(runs);
+  const longestKm = (Math.max.apply(null, runs.map(function(r){return r.distance;}))/1000).toFixed(2);
+  const thisMonth = runs.filter(function(r){
+    var d=new Date(r.start_date); var n=new Date();
+    return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();
+  });
+  const monthKm = (thisMonth.reduce(function(s,a){return s+a.distance;},0)/1000).toFixed(1);
+
+  var stats = [
+    {val: totalKm + 'km',  lbl: 'Total Distance',  sub: monthKm + 'km this month'},
+    {val: runs.length,     lbl: 'Total Runs',       sub: thisMonth.length + ' this month'},
+    {val: avgPace,         lbl: 'Avg Pace',         sub: 'min/km (recent 10)'},
+    {val: totalElev + 'm', lbl: 'Total Elevation',  sub: 'meters climbed'},
+  ];
+  el.innerHTML = stats.map(function(s) {
+    return '<div class="strava-stat">'
+      + '<div class="strava-stat-val">' + s.val + '</div>'
+      + '<div class="strava-stat-lbl">' + s.lbl + '</div>'
+      + '<div class="strava-stat-sub">' + s.sub + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+/* ── Weekly mileage chart ── */
+function renderWeeklyChart(runs) {
+  const el     = document.getElementById('weeklyBars');
+  const lbl    = document.getElementById('weeklyLabels');
+  const avgLbl = document.getElementById('weeklyAvgLbl');
+  if(!el) return;
+
+  var weeks = [];
+  for(var w=7;w>=0;w--) {
+    var start = new Date(); start.setDate(start.getDate() - start.getDay() - w*7);
+    var end   = new Date(start); end.setDate(end.getDate()+7);
+    var km = runs.filter(function(r){
+      var d=new Date(r.start_date); return d>=start&&d<end;
+    }).reduce(function(s,a){return s+a.distance;},0)/1000;
+    weeks.push({km: Math.round(km*10)/10, label: start.toLocaleDateString('en-US',{month:'short',day:'numeric'})});
+  }
+  var maxKm = Math.max.apply(null, weeks.map(function(w){return w.km;})) || 1;
+  var avg   = (weeks.reduce(function(s,w){return s+w.km;},0)/weeks.length).toFixed(1);
+  if(avgLbl) avgLbl.textContent = 'avg ' + avg + 'km/week';
+
+  el.innerHTML = weeks.map(function(w,i) {
+    var h = Math.max((w.km/maxKm)*80, w.km>0?6:4);
+    var isThisWeek = i===7;
+    return '<div class="wbar-wrap">'
+      + '<div class="wbar ' + (w.km>0?'active':'') + ' ' + (isThisWeek?'today':'') + '" style="height:'+h+'px">'
+      + '<div class="wbar-val">' + (w.km>0?w.km+'km':'rest') + '</div>'
+      + '</div></div>';
+  }).join('');
+
+  if(lbl) lbl.innerHTML = weeks.map(function(w,i){
+    var d=new Date(); d.setDate(d.getDate()-d.getDay()-(7-i)*7);
+    return '<div class="wbar-day" style="flex:1;text-align:center">' + d.toLocaleDateString('en-US',{month:'numeric',day:'numeric'}) + '</div>';
+  }).join('');
+}
+
+/* ── Pace trend SVG ── */
+function renderPaceChart(runs) {
+  const svg    = document.getElementById('paceSvg');
+  const avgLbl = document.getElementById('paceAvgLbl');
+  if(!svg) return;
+  var recents = runs.filter(function(r){return r.distance>1000&&r.moving_time>0;}).slice(0,20);
+  if(recents.length < 2) { svg.innerHTML='<text x="200" y="35" text-anchor="middle" fill="var(--text3)" font-size="12">Not enough data yet</text>'; return; }
+
+  var paces = recents.map(function(r){ return (r.moving_time/60)/(r.distance/1000); }).reverse();
+  var minP  = Math.min.apply(null,paces), maxP = Math.max.apply(null,paces);
+  var range = maxP - minP || 1;
+  var W=400, H=60, pad=4;
+  var pts = paces.map(function(p,i){
+    var x = pad + (i/(paces.length-1))*(W-pad*2);
+    var y = pad + ((p-minP)/range)*(H-pad*2);
+    return [x,y];
+  });
+
+  /* Gradient area */
+  var pathD = 'M'+pts[0][0]+','+H+' L'+pts[0][0]+','+pts[0][1];
+  pts.forEach(function(p,i){ if(i>0) pathD += ' L'+p[0]+','+p[1]; });
+  pathD += ' L'+pts[pts.length-1][0]+','+H+' Z';
+
+  var lineD = 'M'+pts.map(function(p){return p[0]+','+p[1];}).join(' L');
+
+  svg.innerHTML = '<defs><linearGradient id="paceGrad" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0%" stop-color="#FC4C02" stop-opacity="0.3"/>'
+    + '<stop offset="100%" stop-color="#FC4C02" stop-opacity="0.02"/>'
+    + '</linearGradient></defs>'
+    + '<path d="'+pathD+'" fill="url(#paceGrad)"/>'
+    + '<path d="'+lineD+'" fill="none" stroke="#FC4C02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    + pts.map(function(p,i){
+        return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3" fill="#FC4C02" opacity="0.7"><title>'+formatPace(paces[i])+'</title></circle>';
+      }).join('');
+
+  var avgPaceVal = paces.reduce(function(s,p){return s+p;},0)/paces.length;
+  if(avgLbl) avgLbl.textContent = 'avg ' + formatPace(avgPaceVal) + '/km';
+}
+
+/* ── Activities list ── */
+function renderActivities() {
+  const el = document.getElementById('activityList');
+  if(!el) return;
+  if(!stravaActivities.length) { el.innerHTML='<div class="empty" style="border:2px dashed var(--border);padding:32px;border-radius:14px;text-align:center"><div style="font-size:36px;margin-bottom:10px">🏃</div><div>No activities yet</div></div>'; return; }
+
+  var typeIcons = {Run:'🏃',Ride:'🚴',Swim:'🏊',Walk:'🚶',Hike:'⛰️',WeightTraining:'💪',Yoga:'🧘',Workout:'🏋️'};
+
+  el.innerHTML = stravaActivities.slice(0,20).map(function(a,i) {
+    var km    = (a.distance/1000).toFixed(2);
+    var pace  = (a.distance>0 && a.moving_time>0) ? formatPace((a.moving_time/60)/(a.distance/1000)) : '--';
+    var elev  = Math.round(a.total_elevation_gain||0);
+    var dur   = formatDuration(a.moving_time);
+    var date  = new Date(a.start_date_local||a.start_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    var icon  = typeIcons[a.type] || typeIcons[a.sport_type] || '🏃';
+    var isRun = a.type==='Run'||a.sport_type==='Run';
+    var hr    = a.average_heartrate ? Math.round(a.average_heartrate)+'bpm' : null;
+    var isPR  = a.pr_count > 0;
+    return '<div class="activity-card" style="animation-delay:'+(i*30)+'ms">'
+      + '<div style="display:flex;align-items:center;gap:12px">'
+      + '<div class="activity-type-icon">'+icon+'</div>'
+      + '<div style="flex:1;min-width:0">'
+      + '<div class="activity-name">' + escH(a.name||'Activity') + (isPR ? ' <span style="color:#FC4C02;font-size:11px">PR!</span>' : '') + '</div>'
+      + '<div style="font-size:11px;color:var(--text2);margin-bottom:8px">'+date+'</div>'
+      + '<div class="activity-meta">'
+      + (isRun ? '<span class="activity-chip highlight">'+km+' km</span>' : '')
+      + (isRun ? '<span class="activity-chip">'+pace+'/km</span>' : '')
+      + '<span class="activity-chip">'+dur+'</span>'
+      + (elev>0 ? '<span class="activity-chip">+'+elev+'m</span>' : '')
+      + (hr ? '<span class="activity-chip">'+hr+'</span>' : '')
+      + '</div></div></div></div>';
+  }).join('');
+}
+
+/* ── Personal Records ── */
+function renderPRs(runs) {
+  const el = document.getElementById('prGrid');
+  if(!el || !runs.length) return;
+
+  /* Find fastest paces for common distances */
+  function bestPace(minKm, maxKm) {
+    var candidates = runs.filter(function(r){ var k=r.distance/1000; return k>=minKm&&k<=maxKm&&r.moving_time>0; });
+    if(!candidates.length) return null;
+    var best = candidates.reduce(function(b,r){ return (r.moving_time/r.distance) < (b.moving_time/b.distance) ? r : b; });
+    return best;
+  }
+
+  var prs = [
+    { label:'Fastest 5K',   medal:'🥇', minKm:4.5,  maxKm:5.5 },
+    { label:'Fastest 10K',  medal:'🥈', minKm:9.0,  maxKm:11.0 },
+    { label:'Half Marathon', medal:'🏅', minKm:20.0, maxKm:22.5 },
+    { label:'Marathon',     medal:'🏆', minKm:41.0, maxKm:43.0 },
+    { label:'Longest Run',  medal:'📏', minKm:0,    maxKm:999  },
+    { label:'Biggest Climb',medal:'⛰️', minKm:0,    maxKm:999  },
+  ];
+
+  el.innerHTML = prs.map(function(pr) {
+    var val, sub;
+    if(pr.label==='Longest Run') {
+      var longest = runs.reduce(function(b,r){return r.distance>b.distance?r:b;}, runs[0]);
+      val = (longest.distance/1000).toFixed(2)+' km';
+      sub = new Date(longest.start_date_local||longest.start_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    } else if(pr.label==='Biggest Climb') {
+      var hilliest = runs.reduce(function(b,r){return (r.total_elevation_gain||0)>(b.total_elevation_gain||0)?r:b;}, runs[0]);
+      val = Math.round(hilliest.total_elevation_gain||0)+' m';
+      sub = new Date(hilliest.start_date_local||hilliest.start_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    } else {
+      var best = bestPace(pr.minKm, pr.maxKm);
+      if(!best) return '<div class="pr-card"><div class="pr-medal" style="opacity:0.3">'+pr.medal+'</div><div class="pr-val" style="color:var(--text3)">--</div><div class="pr-lbl">'+pr.label+'</div><div class="pr-date">No runs yet</div></div>';
+      val = formatDuration(Math.round(best.moving_time * (pr.minKm+pr.maxKm)/2/2 / (best.distance/1000)));
+      sub = new Date(best.start_date_local||best.start_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    }
+    return '<div class="pr-card">'
+      + '<div class="pr-medal">'+pr.medal+'</div>'
+      + '<div class="pr-val">'+val+'</div>'
+      + '<div class="pr-lbl">'+pr.label+'</div>'
+      + '<div class="pr-date">'+sub+'</div>'
+      + '</div>';
+  }).join('');
+}
+
+/* ── Year progress ── */
+function renderYearProgress(runs) {
+  const el = document.getElementById('yearProgress');
+  if(!el) return;
+  var year = new Date().getFullYear();
+  var yearRuns = runs.filter(function(r){ return new Date(r.start_date).getFullYear()===year; });
+  var yearKm   = (yearRuns.reduce(function(s,a){return s+a.distance;},0)/1000).toFixed(0);
+  var goal     = 500;
+  var pct      = Math.min(parseInt(yearKm)/goal*100, 100).toFixed(1);
+  var dayOfYear= Math.ceil((Date.now()-new Date(year+'-01-01'))/(86400*1000));
+  var projKm   = Math.round(parseInt(yearKm)/dayOfYear*365);
+
+  el.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:8px">'
+    + '<span style="font-size:13px;font-weight:600">' + yearKm + ' km in ' + year + '</span>'
+    + '<span style="font-size:12px;color:var(--text2)">Goal: ' + goal + ' km</span>'
+    + '</div>'
+    + '<div style="background:var(--bg3);border-radius:6px;height:12px;overflow:hidden">'
+    + '<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#FC4C02,#ff7043);border-radius:6px;transition:width 1s var(--ease)"></div>'
+    + '</div>'
+    + '<div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text2)">'
+    + '<span>' + pct + '% of annual goal</span>'
+    + '<span>On pace for ' + projKm + ' km/year</span>'
+    + '</div>'
+    + '<div style="margin-top:14px;background:var(--bg3);border-radius:10px;padding:12px 16px">'
+    + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center">'
+    + '<div><div style="font-size:18px;font-weight:800;color:#FC4C02;font-family:Outfit,sans-serif">'+yearRuns.length+'</div><div style="font-size:10px;color:var(--text2)">runs this year</div></div>'
+    + '<div><div style="font-size:18px;font-weight:800;color:#FC4C02;font-family:Outfit,sans-serif">'+Math.round(yearRuns.reduce(function(s,a){return s+(a.total_elevation_gain||0);},0))+'m</div><div style="font-size:10px;color:var(--text2)">elevation gained</div></div>'
+    + '<div><div style="font-size:18px;font-weight:800;color:#FC4C02;font-family:Outfit,sans-serif">'+Math.round(yearRuns.reduce(function(s,a){return s+(a.moving_time||0);},0)/3600)+'h</div><div style="font-size:10px;color:var(--text2)">hours running</div></div>'
+    + '</div></div>';
+}
+
+/* ── Tab switcher ── */
+function switchStravaTab(tab, el) {
+  Sound.click();
+  document.querySelectorAll('.strava-tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  ['overview','activities','records'].forEach(function(t){
+    var tabEl = document.getElementById('stravaTab'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(tabEl) tabEl.style.display = (t===tab) ? 'block' : 'none';
+  });
+  if(tab==='activities') renderActivities();
+}
+
+/* ── Utility helpers ── */
+function formatPace(paceMinPerKm) {
+  var m = Math.floor(paceMinPerKm);
+  var s = Math.round((paceMinPerKm-m)*60);
+  return m + ':' + (s<10?'0':'')+s;
+}
+function formatDuration(seconds) {
+  var h = Math.floor(seconds/3600);
+  var m = Math.floor((seconds%3600)/60);
+  var s = seconds%60;
+  if(h>0) return h+'h '+m+'m';
+  return m+'m '+(s<10?'0':'')+s+'s';
+}
+function getWeekKm(runs, weeksAgo) {
+  var now  = new Date();
+  var start = new Date(now); start.setDate(now.getDate()-now.getDay()-weeksAgo*7); start.setHours(0,0,0,0);
+  var end   = new Date(start); end.setDate(start.getDate()+7);
+  return runs.filter(function(r){var d=new Date(r.start_date);return d>=start&&d<end;})
+             .reduce(function(s,a){return s+a.distance;},0)/1000;
+}
+function getRunStreak(runs) {
+  var streak=0; var d=new Date();
+  for(var i=0;i<365;i++) {
+    var ds=dateStr(d);
+    var ran=runs.some(function(r){return (r.start_date_local||r.start_date||'').slice(0,10)===ds;});
+    if(ran) { streak++; } else if(i>0) { break; }
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+function getAvgPace(runs) {
+  var recents = (runs||[]).filter(function(r){return r.distance>1000&&r.moving_time>0;}).slice(0,10);
+  if(!recents.length) return '--:--';
+  var avg = recents.reduce(function(s,r){return s+(r.moving_time/60)/(r.distance/1000);},0)/recents.length;
+  return formatPace(avg);
+}
+
+/* ── navTo hook ── */
+var _origNavTo = typeof navTo === 'function' ? navTo : null;
+
+
 /* ────────────────────────────────────────────────────────
    INIT
 ──────────────────────────────────────────────────────── */
@@ -2803,10 +3682,62 @@ document.getElementById('appShell').classList.add('hidden');
 /* Init Google Sign-In once the GSI script loads */
 window.onGoogleSignIn = handleGoogleCredential;
 if(typeof google !== 'undefined') initGoogleSignIn();
-document.addEventListener('DOMContentLoaded', ()=>{
-  /* Try again after DOM ready */
+document.addEventListener('DOMContentLoaded', function() {
   setTimeout(initGoogleSignIn, 1500);
+  /* Handle Strava OAuth callback */
+  var params = new URLSearchParams(window.location.search);
+  if(params.get('code') && params.get('scope') && params.get('scope').includes('activity')) {
+    /* We are returning from Strava OAuth — show the app and navigate to Strava page */
+    var retPage = localStorage.getItem('df_strava_return') || 'strava';
+    localStorage.removeItem('df_strava_return');
+    /* Restore session if we have a logged-in user */
+    var accs = getKnownAccounts();
+    if(accs.length) {
+      loginAs(accs[0]);
+      /* After login, handle the callback */
+      setTimeout(function() {
+        handleStravaCallback().then(function(ok) {
+          if(ok) navTo('strava', document.querySelector('[data-page="strava"]'));
+        });
+      }, 400);
+    } else {
+      /* Not logged in — store code temporarily and prompt login */
+      localStorage.setItem('df_strava_pending_code', params.get('code'));
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }
+  /* Handle pending Strava code after fresh login */
+  window._checkPendingStrava = function() {
+    var code = localStorage.getItem('df_strava_pending_code');
+    if(code) {
+      localStorage.removeItem('df_strava_pending_code');
+      /* Fake the URL params for handleStravaCallback */
+      window.history.replaceState({}, '', window.location.pathname + '?code=' + code + '&scope=activity:read_all');
+      handleStravaCallback().then(function(ok) {
+        window.history.replaceState({}, '', window.location.pathname);
+        if(ok) navTo('strava', document.querySelector('[data-page="strava"]'));
+      });
+    }
+  };
 });
+
+/* Update Strava nav badge */
+function updateStravaBadge() {
+  var token = loadStravaToken ? loadStravaToken() : null;
+  var navItem = document.getElementById('stravaNavItem');
+  if(!navItem) return;
+  if(token) {
+    navItem.style.color = 'var(--text)';
+    var badge = navItem.querySelector('.strava-nav-badge');
+    if(!badge) {
+      badge = document.createElement('span');
+      badge.className = 'nav-badge strava-nav-badge';
+      badge.style.background = '#FC4C02';
+      badge.textContent = 'ON';
+      navItem.appendChild(badge);
+    }
+  }
+}
 </script>
 </body>
 </html>
