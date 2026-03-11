@@ -1,0 +1,13 @@
+{
+  "name": "dailyfuse-pro",
+  "version": "1.0.0",
+  "description": "DailyFuse Pro — Personal goal tracker with Google sign-in and email reminders",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "npx http-server . -p 3000 -o",
+    "preview": "npx http-server dist -p 3001 -o"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
