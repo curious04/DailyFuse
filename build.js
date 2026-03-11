@@ -12,11 +12,13 @@ let html = fs.readFileSync('index.html', 'utf8');
 
 // Map of placeholder → environment variable
 const replacements = {
-  '%%GOOGLE_CLIENT_ID%%':       process.env.GOOGLE_CLIENT_ID       || '',
-  '%%EMAILJS_PUBLIC_KEY%%':     process.env.EMAILJS_PUBLIC_KEY     || '',
-  '%%EMAILJS_SERVICE_ID%%':     process.env.EMAILJS_SERVICE_ID     || '',
-  '%%EMAILJS_TEMPLATE_DAILY%%': process.env.EMAILJS_TEMPLATE_DAILY || '',
-  '%%EMAILJS_TEMPLATE_WEEKLY%%':process.env.EMAILJS_TEMPLATE_WEEKLY|| '',
+  '%%GOOGLE_CLIENT_ID%%':        process.env.GOOGLE_CLIENT_ID        || '',
+  '%%EMAILJS_PUBLIC_KEY%%':      process.env.EMAILJS_PUBLIC_KEY      || '',
+  '%%EMAILJS_SERVICE_ID%%':      process.env.EMAILJS_SERVICE_ID      || '',
+  '%%EMAILJS_TEMPLATE_DAILY%%':  process.env.EMAILJS_TEMPLATE_DAILY  || '',
+  '%%EMAILJS_TEMPLATE_WEEKLY%%': process.env.EMAILJS_TEMPLATE_WEEKLY || '',
+  '%%STRAVA_CLIENT_ID%%':        process.env.STRAVA_CLIENT_ID        || '',
+  '%%STRAVA_CLIENT_SECRET%%':    '',  // NEVER injected into HTML — server-side only
 };
 
 // Replace each placeholder
