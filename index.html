@@ -926,6 +926,163 @@ body{
   .pr-grid{grid-template-columns:repeat(2,1fr)}
 }
 
+
+/* ═══════════════════════ NUTRITION HUB ═══════════════════════ */
+.nutr-hero{
+  background:linear-gradient(135deg,rgba(16,185,129,0.14) 0%,rgba(16,185,129,0.04) 60%,rgba(245,158,11,0.08) 100%);
+  border:1px solid rgba(16,185,129,0.25);border-radius:20px;
+  padding:26px 28px;margin-bottom:20px;position:relative;overflow:hidden;
+}
+.nutr-hero::before{
+  content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;
+  border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,0.18),transparent 70%);pointer-events:none;
+}
+.nutr-macro-rings{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:18px}
+.macro-ring-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.macro-ring-svg{transform:rotate(-90deg)}
+.macro-ring-track{fill:none;stroke-width:7}
+.macro-ring-prog{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1s cubic-bezier(0.175,0.885,0.32,1.275)}
+.macro-ring-label{font-family:'Fira Code',monospace;font-size:11px;color:var(--text2);text-align:center}
+.macro-ring-val{font-family:'Outfit',sans-serif;font-weight:800;font-size:11px}
+
+/* Stats row */
+.nutr-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.nutr-stat{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:14px 16px;transition:border-color 0.2s,transform 0.2s;
+}
+.nutr-stat:hover{border-color:rgba(16,185,129,0.35);transform:translateY(-2px)}
+.nutr-stat-val{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;line-height:1;margin-bottom:3px}
+.nutr-stat-lbl{font-size:11px;color:var(--text2)}
+.nutr-stat-bar{height:4px;border-radius:2px;background:var(--border);margin-top:8px;overflow:hidden}
+.nutr-stat-bar-fill{height:100%;border-radius:2px;transition:width 1s var(--ease)}
+
+/* BMI card */
+.bmi-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  padding:20px;margin-bottom:20px;
+}
+.bmi-scale{position:relative;height:18px;border-radius:9px;overflow:hidden;margin:14px 0 6px;
+  background:linear-gradient(90deg,#3B82F6 0%,#10B981 22%,#F59E0B 44%,#EF4444 66%,#7C3AED 100%)}
+.bmi-needle{
+  position:absolute;top:-4px;width:4px;height:26px;border-radius:2px;
+  background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.5);
+  transition:left 1s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+.bmi-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text3);font-family:'Fira Code',monospace}
+
+/* Body stats form */
+.body-form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.body-form-item label{font-size:11px;color:var(--text2);font-weight:600;margin-bottom:4px;display:block}
+.body-form-item input, .body-form-item select{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);
+  font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color 0.15s;
+  box-sizing:border-box;
+}
+.body-form-item input:focus, .body-form-item select:focus{border-color:rgba(16,185,129,0.5)}
+.body-form-item select option{background:var(--bg2)}
+
+/* Progress bar pill */
+.prog-pill{
+  display:flex;align-items:center;gap:10px;margin-bottom:8px;
+}
+.prog-pill-label{font-size:12px;font-weight:600;min-width:80px;flex-shrink:0}
+.prog-pill-bar{flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.prog-pill-fill{height:100%;border-radius:4px;transition:width 0.8s var(--ease)}
+.prog-pill-val{font-size:11px;font-family:'Fira Code',monospace;color:var(--text2);min-width:60px;text-align:right;flex-shrink:0}
+
+/* Food log */
+.food-log{display:flex;flex-direction:column;gap:8px}
+.food-item{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:10px 14px;transition:all 0.15s;animation:goalIn 0.3s var(--ease) both;
+}
+.food-item:hover{border-color:rgba(16,185,129,0.3)}
+.food-icon{width:32px;height:32px;border-radius:8px;background:rgba(16,185,129,0.12);
+  border:1px solid rgba(16,185,129,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.food-name{font-size:13px;font-weight:600;flex:1}
+.food-cal{font-family:'Fira Code',monospace;font-size:12px;color:#F59E0B}
+.food-protein{font-family:'Fira Code',monospace;font-size:11px;color:#10B981}
+.food-del{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;border-radius:4px;line-height:1;transition:color 0.1s}
+.food-del:hover{color:#EF4444}
+
+/* Quick-add pills */
+.quick-foods{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.quick-food-pill{
+  display:flex;align-items:center;gap:5px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:20px;padding:5px 12px;font-size:11px;cursor:pointer;
+  transition:all 0.15s;white-space:nowrap;
+}
+.quick-food-pill:hover{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.35);color:#10B981}
+
+/* Water tracker */
+.water-tracker{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);
+  border-radius:12px;padding:14px 18px;margin-bottom:18px;
+}
+.water-drops{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.water-drop{
+  font-size:20px;cursor:pointer;transition:all 0.2s;opacity:0.25;filter:grayscale(1);
+}
+.water-drop.filled{opacity:1;filter:none;transform:scale(1.1)}
+.water-drop:hover{transform:scale(1.2)}
+
+/* Delivery buttons */
+.delivery-section{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  padding:20px;margin-bottom:20px;
+}
+.delivery-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.delivery-btn{
+  display:flex;align-items:center;gap:8px;
+  border:none;border-radius:10px;padding:11px 18px;
+  font-size:13px;font-weight:700;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  transition:all 0.2s;text-decoration:none;
+}
+.delivery-btn-zomato{background:#E23744;color:#fff;box-shadow:0 4px 14px rgba(226,55,68,0.35)}
+.delivery-btn-zomato:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 8px 24px rgba(226,55,68,0.5)}
+.delivery-btn-swiggy{background:#FC8019;color:#fff;box-shadow:0 4px 14px rgba(252,128,25,0.35)}
+.delivery-btn-swiggy:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 8px 24px rgba(252,128,25,0.5)}
+.healthy-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.healthy-tag{
+  background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);
+  color:#10B981;border-radius:15px;padding:4px 11px;font-size:11px;font-weight:600;cursor:pointer;
+  transition:all 0.15s;
+}
+.healthy-tag:hover{background:rgba(16,185,129,0.2)}
+
+/* Weight log */
+.weight-log-chart{position:relative;height:80px;margin:10px 0}
+.weight-svg{width:100%;height:80px;overflow:visible}
+
+/* Calorie goal modal trigger */
+.nutr-goal-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);
+  color:#10B981;border-radius:8px;padding:4px 12px;font-size:11px;
+  font-weight:700;cursor:pointer;margin-left:8px;transition:all 0.15s;
+}
+.nutr-goal-chip:hover{background:rgba(16,185,129,0.2)}
+
+/* Insight card */
+.nutr-insight{
+  background:linear-gradient(135deg,rgba(124,109,240,0.1),rgba(124,109,240,0.04));
+  border:1px solid rgba(124,109,240,0.2);border-radius:12px;
+  padding:14px 18px;margin-top:12px;font-size:13px;line-height:1.6;
+}
+.nutr-insight-label{font-size:10px;font-weight:700;color:var(--primary2);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+
+@media(max-width:768px){
+  .nutr-stats{grid-template-columns:repeat(2,1fr)}
+  .body-form{grid-template-columns:repeat(2,1fr)}
+  .nutr-macro-rings{justify-content:center}
+}
+
 </style>
 </head>
 <body>
@@ -1058,6 +1215,10 @@ body{
     <div class="nav-item" onclick="navTo('reminders',this)" data-page="reminders">
       <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
       <span>Reminders</span>
+    </div>
+    <div class="nav-item" onclick="navTo('nutrition',this)" data-page="nutrition" id="nutritionNavItem">
+      <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/><path d="M8 12h.01M16 12h.01M12 16h.01"/></svg></span>
+      <span>Nutrition</span>
     </div>
     <div class="nav-item" onclick="navTo('strava',this)" data-page="strava" id="stravaNavItem">
       <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
@@ -1388,6 +1549,225 @@ body{
         </div>
       </div>
     </div>
+
+    <!-- ═══════════ NUTRITION HUB PAGE ═══════════ -->
+    <div class="page" id="page-nutrition">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Nutrition Hub</div>
+          <div class="page-sub" id="nutrPageSub">Track calories, macros &amp; order healthy food</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-ghost btn-sm" onclick="openAddFoodModal()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Log Food
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="openBodyStatsModal()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+            My Stats
+          </button>
+        </div>
+      </div>
+
+      <!-- Today's macro rings hero -->
+      <div class="nutr-hero" id="nutrHero">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+          <div class="nutr-macro-rings" id="macroRings"></div>
+          <div id="nutrCalorieLeft" style="text-align:right">
+            <div style="font-family:'Outfit',sans-serif;font-size:38px;font-weight:900;color:#10B981;line-height:1" id="nutrCalRemain">--</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">kcal remaining today</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px" id="nutrCalProgress"></div>
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="prog-pill">
+            <span class="prog-pill-label" style="color:#F59E0B">Calories</span>
+            <div class="prog-pill-bar"><div class="prog-pill-fill" id="calBar" style="background:linear-gradient(90deg,#F59E0B,#EF4444);width:0%"></div></div>
+            <span class="prog-pill-val" id="calBarVal">0 / 0</span>
+          </div>
+          <div class="prog-pill">
+            <span class="prog-pill-label" style="color:#10B981">Protein</span>
+            <div class="prog-pill-bar"><div class="prog-pill-fill" id="proteinBar" style="background:linear-gradient(90deg,#10B981,#34D399);width:0%"></div></div>
+            <span class="prog-pill-val" id="proteinBarVal">0 / 0g</span>
+          </div>
+          <div class="prog-pill">
+            <span class="prog-pill-label" style="color:#3B82F6">Carbs</span>
+            <div class="prog-pill-bar"><div class="prog-pill-fill" id="carbsBar" style="background:linear-gradient(90deg,#3B82F6,#60A5FA);width:0%"></div></div>
+            <span class="prog-pill-val" id="carbsBarVal">0 / 0g</span>
+          </div>
+          <div class="prog-pill">
+            <span class="prog-pill-label" style="color:#EC4899">Fat</span>
+            <div class="prog-pill-bar"><div class="prog-pill-fill" id="fatBar" style="background:linear-gradient(90deg,#EC4899,#F472B6);width:0%"></div></div>
+            <span class="prog-pill-val" id="fatBarVal">0 / 0g</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="nutr-stats" id="nutrStatsRow"></div>
+
+      <!-- Water tracker -->
+      <div class="water-tracker">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#3B82F6;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Hydration</div>
+          <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:#3B82F6;line-height:1" id="waterCount">0</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:2px">of 8 glasses</div>
+        </div>
+        <div class="water-drops" id="waterDrops"></div>
+        <div>
+          <button class="btn btn-ghost btn-sm" onclick="adjustWater(-1)" style="padding:5px 10px">-</button>
+          <button class="btn btn-primary btn-sm" onclick="adjustWater(1)" style="padding:5px 12px;margin-left:4px">+ Glass</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px">
+
+        <!-- BMI + body card -->
+        <div class="bmi-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <div style="font-weight:700;font-size:14px">Body Stats &amp; BMI</div>
+            <button class="btn btn-ghost btn-sm" onclick="openBodyStatsModal()">Edit</button>
+          </div>
+          <div id="bmiDisplay">
+            <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Add your body stats to see your BMI and daily targets</div>
+            <button class="btn btn-primary btn-sm" onclick="openBodyStatsModal()">Set Up Stats</button>
+          </div>
+        </div>
+
+        <!-- Weight log -->
+        <div class="bmi-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="font-weight:700;font-size:14px">Weight Journal</div>
+            <button class="btn btn-ghost btn-sm" onclick="logWeightToday()">Log Today</button>
+          </div>
+          <div id="weightLogDisplay">
+            <div style="font-size:12px;color:var(--text2)">Log your weight daily to track progress</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery section -->
+      <div class="delivery-section" id="deliverySection">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:15px;margin-bottom:4px">Order Healthy Food</div>
+            <div style="font-size:12px;color:var(--text2)" id="deliveryLocationText">Connecting to nearby restaurants...</div>
+          </div>
+          <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:8px 14px;font-size:12px;color:#10B981;font-weight:600" id="deliveryCalTip">
+            Today's deficit: calculating...
+          </div>
+        </div>
+        <div style="margin-top:14px;font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:600">Healthy food near you:</div>
+        <div class="healthy-tags" id="healthyTags"></div>
+        <div class="delivery-buttons" id="deliveryButtons"></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:10px">
+          Tapping opens the app in your browser. We never share your location with third-party services.
+        </div>
+      </div>
+
+      <!-- AI Nutrition Insight -->
+      <div class="nutr-insight" id="nutrInsight">
+        <div class="nutr-insight-label">AI Insight</div>
+        <div id="nutrInsightText">Set up your body stats to get personalized nutrition insights.</div>
+      </div>
+
+      <!-- Today's food log -->
+      <div class="card" style="padding:20px;margin-top:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-weight:700;font-size:15px">Today's Food Log</div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-sm" onclick="clearTodayFoodLog()">Clear</button>
+            <button class="btn btn-primary btn-sm" onclick="openAddFoodModal()">+ Add</button>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:10px;font-weight:600">Quick Add</div>
+        <div class="quick-foods" id="quickFoodPills"></div>
+        <div class="food-log" id="foodLog"></div>
+        <div id="foodLogEmpty" style="text-align:center;padding:24px;color:var(--text3);font-size:13px;display:none">
+          No food logged yet today. Tap "+ Add" or use quick add above.
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Food Modal -->
+    <div id="addFoodModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px;width:420px;max-width:94vw;box-shadow:0 24px 80px rgba(0,0,0,0.5)">
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center">
+          Log Food
+          <button class="btn-icon btn btn-sm" onclick="closeAddFoodModal()">&#10005;</button>
+        </div>
+        <div class="fg"><label class="label">Food name</label><input class="input" id="foodNameInp" placeholder="e.g. Grilled chicken breast" autocomplete="off"/></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:12px">
+          <div class="fg"><label class="label">Calories</label><input class="input" id="foodCalInp" type="number" placeholder="kcal" min="0"/></div>
+          <div class="fg"><label class="label">Protein (g)</label><input class="input" id="foodProtInp" type="number" placeholder="g" min="0"/></div>
+          <div class="fg"><label class="label">Carbs (g)</label><input class="input" id="foodCarbInp" type="number" placeholder="g" min="0"/></div>
+          <div class="fg"><label class="label">Fat (g)</label><input class="input" id="foodFatInp" type="number" placeholder="g" min="0"/></div>
+        </div>
+        <div class="fg" style="margin-top:12px"><label class="label">Meal</label>
+          <select class="input" id="foodMealInp">
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch" selected>Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack">Snack</option>
+          </select>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px">
+          <button class="btn btn-ghost" style="flex:1" onclick="closeAddFoodModal()">Cancel</button>
+          <button class="btn btn-primary" style="flex:1;background:linear-gradient(135deg,#10B981,#059669)" onclick="saveFood()">Log Food</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body Stats Modal -->
+    <div id="bodyStatsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px;width:460px;max-width:94vw;box-shadow:0 24px 80px rgba(0,0,0,0.5);max-height:90vh;overflow-y:auto">
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+          Body Stats &amp; Goals
+          <button class="btn-icon btn btn-sm" onclick="closeBodyStatsModal()">&#10005;</button>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:20px">Used to calculate your daily calorie and protein targets</div>
+        <div class="body-form">
+          <div class="body-form-item"><label>Age</label><input type="number" id="bsAge" placeholder="25" min="10" max="100"/></div>
+          <div class="body-form-item"><label>Gender</label><select id="bsGender"><option value="male">Male</option><option value="female">Female</option></select></div>
+          <div class="body-form-item"><label>Height (cm)</label><input type="number" id="bsHeight" placeholder="170" min="100" max="250"/></div>
+          <div class="body-form-item"><label>Weight (kg)</label><input type="number" id="bsWeight" placeholder="70" min="30" max="300" step="0.1"/></div>
+          <div class="body-form-item"><label>Goal</label>
+            <select id="bsGoal">
+              <option value="lose">Lose Weight</option>
+              <option value="maintain" selected>Maintain</option>
+              <option value="gain">Gain Muscle</option>
+            </select>
+          </div>
+          <div class="body-form-item"><label>Activity Level</label>
+            <select id="bsActivity">
+              <option value="1.2">Sedentary (desk job)</option>
+              <option value="1.375">Light (1-3x/week)</option>
+              <option value="1.55" selected>Moderate (3-5x/week)</option>
+              <option value="1.725">Active (6-7x/week)</option>
+              <option value="1.9">Very Active (athlete)</option>
+            </select>
+          </div>
+        </div>
+        <div id="bsResult" style="background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:18px;display:none">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center">
+            <div><div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:#F59E0B" id="bsBMR">--</div><div style="font-size:10px;color:var(--text2)">BMR (kcal)</div></div>
+            <div><div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:#10B981" id="bsTDEE">--</div><div style="font-size:10px;color:var(--text2)">Daily Target (kcal)</div></div>
+            <div><div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:#3B82F6" id="bsProtein">--</div><div style="font-size:10px;color:var(--text2)">Protein (g/day)</div></div>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text2);text-align:center" id="bsInsight"></div>
+        </div>
+        <div style="margin-bottom:14px">
+          <button class="btn btn-ghost" style="width:100%;margin-bottom:8px" onclick="calcBodyStats()">
+            Calculate My Targets
+          </button>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost" style="flex:1" onclick="closeBodyStatsModal()">Cancel</button>
+          <button class="btn btn-primary" style="flex:1;background:linear-gradient(135deg,#10B981,#059669)" onclick="saveBodyStats()">Save Stats</button>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -2235,6 +2615,7 @@ function navTo(page, el) {
   else if(page==='goals') renderAllGoals();
   else if(page==='reminders') renderRemindersPage();
   else if(page==='strava') renderStravaPage();
+  else if(page==='nutrition') renderNutritionPage();
   else render();
 }
 
@@ -3107,6 +3488,569 @@ document.getElementById('gEmailInput')?.addEventListener('keydown',e=>{if(e.key=
    UTILITY
 ──────────────────────────────────────────────────────── */
 function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+
+/* ════════════════════════════════════════════════════════════
+   NUTRITION HUB ENGINE
+════════════════════════════════════════════════════════════ */
+
+/* ── Storage ── */
+function nutrKey(type) { return 'df_nutr_' + type + '_' + (currentUser ? currentUser.id : 'anon'); }
+function saveNutrData(type, data) { try { localStorage.setItem(nutrKey(type), JSON.stringify(data)); } catch(e){} }
+function loadNutrData(type) { try { return JSON.parse(localStorage.getItem(nutrKey(type)) || 'null'); } catch(e) { return null; } }
+
+/* ── Mifflin-St Jeor BMR formula ── */
+function calcBMR(stats) {
+  if(!stats || !stats.weight || !stats.height || !stats.age) return 0;
+  var bmr = (10 * stats.weight) + (6.25 * stats.height) - (5 * stats.age);
+  return stats.gender === 'female' ? bmr - 161 : bmr + 5;
+}
+function calcTDEE(stats) {
+  var bmr = calcBMR(stats);
+  var tdee = bmr * parseFloat(stats.activity || 1.55);
+  if(stats.goal === 'lose') return Math.round(tdee - 500);
+  if(stats.goal === 'gain') return Math.round(tdee + 300);
+  return Math.round(tdee);
+}
+function calcProtein(stats) {
+  if(!stats || !stats.weight) return 150;
+  /* 1.8g–2.2g per kg for muscle, 1.6g for maintain, 1.2g for lose */
+  var mult = stats.goal === 'gain' ? 2.0 : stats.goal === 'lose' ? 1.4 : 1.7;
+  return Math.round(stats.weight * mult);
+}
+function calcCarbs(stats, calTarget) {
+  /* 40% of calories from carbs */
+  return Math.round((calTarget * 0.40) / 4);
+}
+function calcFat(stats, calTarget) {
+  /* 30% of calories from fat */
+  return Math.round((calTarget * 0.30) / 9);
+}
+
+/* ── Quick food database ── */
+var QUICK_FOODS = [
+  { name:'Boiled Eggs (2)', cal:156, protein:13, carbs:1, fat:11, icon:'🥚', meal:'Breakfast' },
+  { name:'Greek Yogurt', cal:100, protein:17, carbs:6, fat:0, icon:'🥛', meal:'Breakfast' },
+  { name:'Oats (50g)', cal:190, protein:7, carbs:33, fat:3, icon:'🌾', meal:'Breakfast' },
+  { name:'Banana', cal:90, protein:1, carbs:23, fat:0, icon:'🍌', meal:'Snack' },
+  { name:'Grilled Chicken (100g)', cal:165, protein:31, carbs:0, fat:4, icon:'🍗', meal:'Lunch' },
+  { name:'Brown Rice (100g)', cal:216, protein:5, carbs:45, fat:2, icon:'🍚', meal:'Lunch' },
+  { name:'Paneer (100g)', cal:265, protein:18, carbs:3, fat:20, icon:'🧀', meal:'Lunch' },
+  { name:'Dal (1 bowl)', cal:130, protein:9, carbs:22, fat:1, icon:'🍲', meal:'Lunch' },
+  { name:'Salad (large)', cal:80, protein:3, carbs:12, fat:2, icon:'🥗', meal:'Lunch' },
+  { name:'Almonds (25g)', cal:145, protein:5, carbs:5, fat:13, icon:'🥜', meal:'Snack' },
+  { name:'Whey Protein', cal:120, protein:25, carbs:3, fat:2, icon:'💪', meal:'Snack' },
+  { name:'Roti (2)', cal:200, protein:6, carbs:38, fat:3, icon:'🫓', meal:'Dinner' },
+  { name:'Salmon (100g)', cal:206, protein:20, carbs:0, fat:13, icon:'🐟', meal:'Dinner' },
+  { name:'Avocado (half)', cal:120, protein:1, carbs:6, fat:11, icon:'🥑', meal:'Snack' },
+  { name:'Apple', cal:80, protein:0, carbs:21, fat:0, icon:'🍎', meal:'Snack' },
+  { name:'Sweet Potato (med)', cal:130, protein:3, carbs:30, fat:0, icon:'🍠', meal:'Dinner' },
+];
+
+/* ── Healthy food search queries for Zomato & Swiggy ── */
+var HEALTHY_SEARCH_TAGS = [
+  { label:'Protein Bowl', query:'protein bowl' },
+  { label:'Salad', query:'healthy salad' },
+  { label:'Grilled Chicken', query:'grilled chicken' },
+  { label:'Smoothie Bowl', query:'smoothie bowl acai' },
+  { label:'Quinoa', query:'quinoa bowl' },
+  { label:'Vegan', query:'vegan healthy' },
+  { label:'Low Carb', query:'low carb keto' },
+  { label:'High Protein', query:'high protein meal' },
+  { label:'Fruit Bowl', query:'fresh fruit bowl' },
+  { label:'Oats', query:'overnight oats breakfast' },
+];
+
+var currentFoodTag = 'protein bowl';
+var userCity = '';
+var userLat = 0, userLng = 0;
+
+/* ── Delivery URL builders ── */
+function buildZomatoUrl(query, city) {
+  var base = 'https://www.zomato.com/';
+  if(city) base += encodeURIComponent(city.toLowerCase().replace(/\s+/g,'-')) + '/';
+  return base + 'search?q=' + encodeURIComponent(query) + '&sort=popularity&order=desc';
+}
+function buildSwiggyUrl(query, lat, lng) {
+  var base = 'https://www.swiggy.com/search?query=' + encodeURIComponent(query);
+  return base;
+}
+
+/* ── Detect user location ── */
+function detectLocation() {
+  if(!navigator.geolocation) {
+    document.getElementById('deliveryLocationText').textContent = 'Enable location for nearby restaurants';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      userLat = pos.coords.latitude;
+      userLng = pos.coords.longitude;
+      /* Reverse geocode using free API */
+      fetch('https://nominatim.openstreetmap.org/reverse?lat=' + userLat + '&lon=' + userLng + '&format=json')
+        .then(function(r){ return r.json(); })
+        .then(function(d) {
+          userCity = d.address && (d.address.city || d.address.town || d.address.state_district || '') || '';
+          document.getElementById('deliveryLocationText').textContent =
+            userCity ? 'Near ' + userCity + ' — pick a healthy option:' : 'Nearby healthy restaurants:';
+          renderDeliveryButtons();
+        })
+        .catch(function(){
+          document.getElementById('deliveryLocationText').textContent = 'Healthy food near you:';
+          renderDeliveryButtons();
+        });
+    },
+    function() {
+      document.getElementById('deliveryLocationText').textContent = 'Healthy food options:';
+      renderDeliveryButtons();
+    },
+    { timeout: 8000 }
+  );
+}
+
+function renderDeliveryButtons() {
+  /* Tags */
+  var tagsEl = document.getElementById('healthyTags');
+  if(tagsEl) tagsEl.innerHTML = HEALTHY_SEARCH_TAGS.map(function(t) {
+    var active = t.query === currentFoodTag ? 'style="background:rgba(16,185,129,0.25);border-color:rgba(16,185,129,0.5)"' : '';
+    return '<span class="healthy-tag" ' + active + ' onclick="setFoodTag(\'' + t.query + '\',this)">' + t.label + '</span>';
+  }).join('');
+
+  /* Buttons */
+  var btnsEl = document.getElementById('deliveryButtons');
+  if(!btnsEl) return;
+  var zUrl = buildZomatoUrl(currentFoodTag, userCity);
+  var sUrl = buildSwiggyUrl(currentFoodTag, userLat, userLng);
+  btnsEl.innerHTML =
+    '<a href="' + zUrl + '" target="_blank" rel="noopener" class="delivery-btn delivery-btn-zomato" onclick="Sound.click()">'
+    + '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/><line x1="9" y1="9" x2="9.01" y2="9" stroke="white" stroke-width="2"/><line x1="15" y1="9" x2="15.01" y2="9" stroke="white" stroke-width="2"/></svg>'
+    + 'Order on Zomato</a>'
+    + '<a href="' + sUrl + '" target="_blank" rel="noopener" class="delivery-btn delivery-btn-swiggy" onclick="Sound.click()">'
+    + '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>'
+    + 'Order on Swiggy</a>';
+}
+
+function setFoodTag(tag, el) {
+  Sound.click();
+  currentFoodTag = tag;
+  renderDeliveryButtons();
+}
+
+/* ── Body stats modal ── */
+function openBodyStatsModal() {
+  var stats = loadNutrData('stats') || {};
+  if(stats.age) document.getElementById('bsAge').value = stats.age;
+  if(stats.gender) document.getElementById('bsGender').value = stats.gender;
+  if(stats.height) document.getElementById('bsHeight').value = stats.height;
+  if(stats.weight) document.getElementById('bsWeight').value = stats.weight;
+  if(stats.goal) document.getElementById('bsGoal').value = stats.goal;
+  if(stats.activity) document.getElementById('bsActivity').value = stats.activity;
+  document.getElementById('bodyStatsModal').style.display = 'flex';
+  if(stats.weight) calcBodyStats();
+}
+function closeBodyStatsModal() { document.getElementById('bodyStatsModal').style.display = 'none'; }
+function calcBodyStats() {
+  var age      = parseInt(document.getElementById('bsAge').value) || 0;
+  var gender   = document.getElementById('bsGender').value;
+  var height   = parseFloat(document.getElementById('bsHeight').value) || 0;
+  var weight   = parseFloat(document.getElementById('bsWeight').value) || 0;
+  var goal     = document.getElementById('bsGoal').value;
+  var activity = parseFloat(document.getElementById('bsActivity').value) || 1.55;
+  if(!age || !height || !weight) return;
+  var stats = { age, gender, height, weight, goal, activity };
+  var bmr   = Math.round(calcBMR(stats));
+  var tdee  = calcTDEE(stats);
+  var prot  = calcProtein(stats);
+  document.getElementById('bsBMR').textContent    = bmr;
+  document.getElementById('bsTDEE').textContent   = tdee;
+  document.getElementById('bsProtein').textContent = prot + 'g';
+  var bmi = (weight / ((height/100) * (height/100))).toFixed(1);
+  var bmiCat = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obese';
+  document.getElementById('bsInsight').textContent = 'BMI: ' + bmi + ' (' + bmiCat + ') — Your Basal Metabolic Rate is ' + bmr + ' kcal. With your activity level and goal, aim for ' + tdee + ' kcal/day.';
+  document.getElementById('bsResult').style.display = 'block';
+}
+function saveBodyStats() {
+  var stats = {
+    age:      parseInt(document.getElementById('bsAge').value) || 0,
+    gender:   document.getElementById('bsGender').value,
+    height:   parseFloat(document.getElementById('bsHeight').value) || 0,
+    weight:   parseFloat(document.getElementById('bsWeight').value) || 0,
+    goal:     document.getElementById('bsGoal').value,
+    activity: parseFloat(document.getElementById('bsActivity').value) || 1.55,
+  };
+  if(!stats.age || !stats.height || !stats.weight) {
+    showToast('Please fill all fields', 'error'); return;
+  }
+  /* Log today weight */
+  var wLog = loadNutrData('weightlog') || [];
+  var today = todayStr();
+  if(!wLog.find(function(w){ return w.date === today; }))
+    wLog.unshift({ date: today, kg: stats.weight });
+  saveNutrData('weightlog', wLog);
+  saveNutrData('stats', stats);
+  closeBodyStatsModal();
+  renderNutritionPage();
+  showToast('Stats saved! Targets updated.', 'success');
+  Sound.complete();
+}
+
+/* ── Add food modal ── */
+function openAddFoodModal() {
+  document.getElementById('addFoodModal').style.display = 'flex';
+  setTimeout(function(){ document.getElementById('foodNameInp').focus(); }, 100);
+}
+function closeAddFoodModal() {
+  document.getElementById('addFoodModal').style.display = 'none';
+  ['foodNameInp','foodCalInp','foodProtInp','foodCarbInp','foodFatInp'].forEach(function(id){ document.getElementById(id).value = ''; });
+}
+function saveFood() {
+  var name    = document.getElementById('foodNameInp').value.trim();
+  var cal     = parseFloat(document.getElementById('foodCalInp').value) || 0;
+  var protein = parseFloat(document.getElementById('foodProtInp').value) || 0;
+  var carbs   = parseFloat(document.getElementById('foodCarbInp').value) || 0;
+  var fat     = parseFloat(document.getElementById('foodFatInp').value) || 0;
+  var meal    = document.getElementById('foodMealInp').value;
+  if(!name) { document.getElementById('foodNameInp').style.borderColor='#EF4444'; return; }
+  var entry = { id: Date.now(), name, cal, protein, carbs, fat, meal, time: new Date().toISOString() };
+  var log = loadNutrData('foodlog_' + todayStr()) || [];
+  log.push(entry);
+  saveNutrData('foodlog_' + todayStr(), log);
+  closeAddFoodModal();
+  renderFoodLog();
+  renderMacroProgress();
+  showToast('Food logged!', 'success');
+  Sound.check();
+}
+function quickAddFood(idx) {
+  Sound.click();
+  var food = QUICK_FOODS[idx];
+  var entry = Object.assign({}, food, { id: Date.now(), time: new Date().toISOString() });
+  var log = loadNutrData('foodlog_' + todayStr()) || [];
+  log.push(entry);
+  saveNutrData('foodlog_' + todayStr(), log);
+  renderFoodLog();
+  renderMacroProgress();
+  showToast(food.icon + ' ' + food.name + ' added!', 'success');
+}
+function deleteFood(id) {
+  Sound.click();
+  var log = (loadNutrData('foodlog_' + todayStr()) || []).filter(function(f){ return f.id !== id; });
+  saveNutrData('foodlog_' + todayStr(), log);
+  renderFoodLog();
+  renderMacroProgress();
+}
+function clearTodayFoodLog() {
+  if(!confirm('Clear all food logs for today?')) return;
+  saveNutrData('foodlog_' + todayStr(), []);
+  renderFoodLog();
+  renderMacroProgress();
+  showToast('Food log cleared', 'success');
+}
+
+/* ── Water tracker ── */
+function adjustWater(delta) {
+  Sound.click();
+  var key  = 'water_' + todayStr();
+  var cur  = parseInt(localStorage.getItem('df_' + key + '_' + (currentUser ? currentUser.id : 'anon')) || '0');
+  cur = Math.max(0, Math.min(12, cur + delta));
+  localStorage.setItem('df_' + key + '_' + (currentUser ? currentUser.id : 'anon'), cur);
+  renderWaterTracker();
+  if(cur >= 8) showToast('Hydration goal reached! Great job!', 'success');
+}
+function getWaterToday() {
+  var key = 'df_water_' + todayStr() + '_' + (currentUser ? currentUser.id : 'anon');
+  return parseInt(localStorage.getItem(key) || '0');
+}
+function renderWaterTracker() {
+  var count = getWaterToday();
+  var countEl = document.getElementById('waterCount');
+  var dropsEl = document.getElementById('waterDrops');
+  if(countEl) countEl.textContent = count;
+  if(dropsEl) {
+    dropsEl.innerHTML = Array.from({length: 8}, function(_, i) {
+      return '<span class="water-drop ' + (i < count ? 'filled' : '') + '" onclick="adjustWater(1)" title="Glass ' + (i+1) + '">💧</span>';
+    }).join('');
+  }
+}
+
+/* ── Weight log ── */
+function logWeightToday() {
+  var stats = loadNutrData('stats') || {};
+  var defaultW = stats.weight || '';
+  var w = prompt('Enter your weight today (kg):', defaultW);
+  if(!w) return;
+  var kg = parseFloat(w);
+  if(isNaN(kg) || kg < 20 || kg > 400) { showToast('Invalid weight', 'error'); return; }
+  var log = loadNutrData('weightlog') || [];
+  var today = todayStr();
+  log = log.filter(function(e){ return e.date !== today; });
+  log.unshift({ date: today, kg });
+  log = log.slice(0, 90);
+  saveNutrData('weightlog', log);
+  /* Update stats weight */
+  if(stats.weight) { stats.weight = kg; saveNutrData('stats', stats); }
+  renderWeightLog();
+  showToast('Weight logged: ' + kg + 'kg', 'success');
+}
+
+function renderWeightLog() {
+  var el = document.getElementById('weightLogDisplay');
+  if(!el) return;
+  var log = loadNutrData('weightlog') || [];
+  if(!log.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--text2)">Log your weight daily to track progress</div>';
+    return;
+  }
+  var recent = log.slice(0, 14).reverse();
+  var min = Math.min.apply(null, recent.map(function(e){ return e.kg; }));
+  var max = Math.max.apply(null, recent.map(function(e){ return e.kg; }));
+  var range = max - min || 1;
+  var first = log[log.length-1], last = log[0];
+  var diff = (last.kg - first.kg).toFixed(1);
+  var trend = diff > 0 ? '+' + diff + 'kg' : diff + 'kg';
+  var trendColor = diff > 0 ? '#EF4444' : '#10B981';
+
+  var pts = recent.map(function(e, i) {
+    var x = (i / Math.max(recent.length-1, 1)) * 240 + 10;
+    var y = 50 - ((e.kg - min) / range) * 40;
+    return [x, y, e.kg];
+  });
+  var pathD = pts.map(function(p, i){ return (i===0?'M':'L') + p[0] + ',' + p[1]; }).join(' ');
+
+  el.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+    + '<div><span style="font-family:Outfit,sans-serif;font-size:22px;font-weight:800">' + last.kg + '</span><span style="font-size:11px;color:var(--text2);margin-left:4px">kg now</span></div>'
+    + '<div style="font-size:13px;font-weight:700;color:' + trendColor + '">' + trend + ' total</div>'
+    + '</div>'
+    + '<div class="weight-log-chart">'
+    + '<svg class="weight-svg" viewBox="0 0 260 60" preserveAspectRatio="none">'
+    + '<path d="' + pathD + ' L' + pts[pts.length-1][0] + ',60 L10,60 Z" fill="rgba(16,185,129,0.08)"/>'
+    + '<path d="' + pathD + '" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    + pts.map(function(p){ return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3" fill="#10B981" opacity="0.8"><title>'+p[2]+'kg</title></circle>'; }).join('')
+    + '</svg></div>'
+    + '<div style="font-size:10px;color:var(--text3);text-align:right;font-family:Fira Code,monospace">' + recent.length + '-day log</div>';
+}
+
+/* ── Macro progress bars ── */
+function getTodayTotals() {
+  var log = loadNutrData('foodlog_' + todayStr()) || [];
+  return log.reduce(function(s, f) {
+    return { cal: s.cal + (f.cal||0), protein: s.protein + (f.protein||0), carbs: s.carbs + (f.carbs||0), fat: s.fat + (f.fat||0) };
+  }, { cal: 0, protein: 0, carbs: 0, fat: 0 });
+}
+function renderMacroProgress() {
+  var stats   = loadNutrData('stats');
+  var totals  = getTodayTotals();
+  var calTarget     = stats ? calcTDEE(stats) : 2000;
+  var protTarget    = stats ? calcProtein(stats) : 150;
+  var carbTarget    = stats ? calcCarbs(stats, calTarget) : 250;
+  var fatTarget     = stats ? calcFat(stats, calTarget) : 65;
+  var remaining = Math.max(0, calTarget - totals.cal);
+
+  var remEl = document.getElementById('nutrCalRemain');
+  if(remEl) remEl.textContent = remaining.toLocaleString();
+  var progEl = document.getElementById('nutrCalProgress');
+  if(progEl) progEl.textContent = totals.cal + ' consumed of ' + calTarget + ' kcal target';
+
+  function setBar(barId, valId, cur, target, unit) {
+    var b = document.getElementById(barId); var v = document.getElementById(valId);
+    if(b) b.style.width = Math.min(cur/target*100, 100) + '%';
+    if(v) v.textContent = Math.round(cur) + ' / ' + target + (unit||'');
+  }
+  setBar('calBar', 'calBarVal', totals.cal, calTarget, ' kcal');
+  setBar('proteinBar', 'proteinBarVal', totals.protein, protTarget, 'g');
+  setBar('carbsBar', 'carbsBarVal', totals.carbs, carbTarget, 'g');
+  setBar('fatBar', 'fatBarVal', totals.fat, fatTarget, 'g');
+
+  /* Macro rings */
+  renderMacroRings(totals, {cal:calTarget, protein:protTarget, carbs:carbTarget, fat:fatTarget});
+
+  /* Calorie tip for delivery section */
+  var tipEl = document.getElementById('deliveryCalTip');
+  if(tipEl) {
+    var deficit = calTarget - totals.cal;
+    tipEl.textContent = deficit > 0 ? 'You can still eat ' + deficit + ' kcal today' : 'Daily goal reached! Have something light.';
+    tipEl.style.color = deficit > 200 ? '#10B981' : deficit > 0 ? '#F59E0B' : '#EF4444';
+  }
+
+  /* AI Insight */
+  renderNutrInsight(totals, {cal:calTarget, protein:protTarget}, stats);
+}
+
+function renderMacroRings(totals, targets) {
+  var el = document.getElementById('macroRings');
+  if(!el) return;
+  var rings = [
+    { label:'Calories', val:totals.cal, target:targets.cal, unit:'kcal', color:'#F59E0B', r:30 },
+    { label:'Protein',  val:totals.protein, target:targets.protein, unit:'g', color:'#10B981', r:24 },
+    { label:'Carbs',    val:totals.carbs, target:targets.carbs, unit:'g', color:'#3B82F6', r:24 },
+    { label:'Fat',      val:totals.fat, target:targets.fat, unit:'g', color:'#EC4899', r:24 },
+  ];
+  el.innerHTML = rings.map(function(ring) {
+    var pct  = Math.min(ring.val / Math.max(ring.target,1), 1);
+    var circ = 2 * Math.PI * ring.r;
+    var dash = circ * pct;
+    var size = ring.r === 30 ? 72 : 60;
+    return '<div class="macro-ring-wrap">'
+      + '<svg class="macro-ring-svg" width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'
+      + '<circle class="macro-ring-track" cx="'+(size/2)+'" cy="'+(size/2)+'" r="'+ring.r+'" stroke="var(--border2)"/>'
+      + '<circle class="macro-ring-prog" cx="'+(size/2)+'" cy="'+(size/2)+'" r="'+ring.r
+        + '" stroke="'+ring.color+'" stroke-dasharray="'+circ+'" stroke-dashoffset="'+(circ-dash)+'"/>'
+      + '<text x="'+(size/2)+'" y="'+(size/2-3)+'" text-anchor="middle" fill="'+ring.color
+        + '" font-family="Outfit,sans-serif" font-weight="800" font-size="'+(ring.r===30?10:9)+'">'
+        + Math.round(ring.val) + '</text>'
+      + '<text x="'+(size/2)+'" y="'+(size/2+9)+'" text-anchor="middle" fill="var(--text3)" font-family="Fira Code,monospace" font-size="7">'
+        + ring.unit + '</text>'
+      + '</svg>'
+      + '<div class="macro-ring-label">' + ring.label + '</div>'
+      + '<div class="macro-ring-val" style="color:'+ring.color+'">' + Math.round(pct*100) + '%</div>'
+      + '</div>';
+  }).join('');
+}
+
+/* ── BMI display ── */
+function renderBMICard() {
+  var el = document.getElementById('bmiDisplay');
+  if(!el) return;
+  var stats = loadNutrData('stats');
+  if(!stats || !stats.weight || !stats.height) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--text2);margin-bottom:8px">Add your body stats to see your BMI and daily targets</div>'
+      + '<button class="btn btn-primary btn-sm" onclick="openBodyStatsModal()">Set Up Stats</button>';
+    return;
+  }
+  var bmi = stats.weight / Math.pow(stats.height/100, 2);
+  var bmiRound = bmi.toFixed(1);
+  var cat = bmi<18.5 ? {label:'Underweight',color:'#3B82F6'} : bmi<25 ? {label:'Normal',color:'#10B981'} : bmi<30 ? {label:'Overweight',color:'#F59E0B'} : {label:'Obese',color:'#EF4444'};
+  /* Needle position: BMI 10=0%, BMI 40=100% */
+  var needlePct = Math.max(0, Math.min(100, (bmi - 10) / 30 * 100));
+  el.innerHTML = '<div style="display:flex;align-items:center;gap:16px;margin-bottom:10px">'
+    + '<div style="text-align:center">'
+    + '<div style="font-family:Outfit,sans-serif;font-size:32px;font-weight:900;color:'+cat.color+';line-height:1">'+bmiRound+'</div>'
+    + '<div style="font-size:11px;color:var(--text2)">BMI</div>'
+    + '</div>'
+    + '<div style="flex:1">'
+    + '<div style="font-weight:700;font-size:14px;color:'+cat.color+'">'+cat.label+'</div>'
+    + '<div style="font-size:11px;color:var(--text2);margin-top:2px">'+stats.height+'cm | '+stats.weight+'kg | '+stats.age+'y</div>'
+    + '<div style="font-size:11px;color:var(--text2);margin-top:2px">Goal: '+stats.goal+' | Target: '+calcTDEE(stats)+' kcal/day</div>'
+    + '</div></div>'
+    + '<div class="bmi-scale"><div class="bmi-needle" style="left:'+needlePct+'%"></div></div>'
+    + '<div class="bmi-labels"><span>Underweight</span><span>Normal</span><span>Overweight</span><span>Obese</span></div>';
+}
+
+/* ── Stats row ── */
+function renderNutrStats() {
+  var el = document.getElementById('nutrStatsRow');
+  if(!el) return;
+  var stats  = loadNutrData('stats');
+  var totals = getTodayTotals();
+  var calTarget  = stats ? calcTDEE(stats) : 2000;
+  var protTarget = stats ? calcProtein(stats) : 150;
+  var log = loadNutrData('foodlog_' + todayStr()) || [];
+  var water = getWaterToday();
+  var bmi = stats ? (stats.weight / Math.pow(stats.height/100,2)).toFixed(1) : '--';
+
+  var items = [
+    { val: calTarget, lbl: 'Calorie Target', sub: totals.cal + ' consumed', pct: totals.cal/calTarget, color:'#F59E0B' },
+    { val: protTarget+'g', lbl: 'Protein Target', sub: totals.protein+'g today', pct: totals.protein/protTarget, color:'#10B981' },
+    { val: water+'/8', lbl: 'Hydration', sub: 'glasses today', pct: water/8, color:'#3B82F6' },
+    { val: bmi, lbl: 'BMI', sub: stats ? stats.goal+' goal' : 'set up stats', pct: null, color:'#EC4899' },
+  ];
+  el.innerHTML = items.map(function(item) {
+    return '<div class="nutr-stat">'
+      + '<div class="nutr-stat-val" style="color:'+item.color+'">'+item.val+'</div>'
+      + '<div class="nutr-stat-lbl">'+item.lbl+'</div>'
+      + '<div class="nutr-stat-lbl" style="font-size:10px;margin-top:2px;color:var(--text3)">'+item.sub+'</div>'
+      + (item.pct !== null ? '<div class="nutr-stat-bar"><div class="nutr-stat-bar-fill" style="width:'+Math.min(item.pct*100,100)+'%;background:'+item.color+'"></div></div>' : '')
+      + '</div>';
+  }).join('');
+}
+
+/* ── Food log renderer ── */
+function renderFoodLog() {
+  var el    = document.getElementById('foodLog');
+  var empty = document.getElementById('foodLogEmpty');
+  if(!el) return;
+  var log = loadNutrData('foodlog_' + todayStr()) || [];
+  if(!log.length) {
+    el.innerHTML = '';
+    if(empty) empty.style.display = 'block';
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+  var grouped = { Breakfast:[], Lunch:[], Dinner:[], Snack:[] };
+  log.forEach(function(f){ (grouped[f.meal] = grouped[f.meal]||[]).push(f); });
+  var html = '';
+  ['Breakfast','Lunch','Dinner','Snack'].forEach(function(meal) {
+    var items = grouped[meal] || [];
+    if(!items.length) return;
+    var mealCal = items.reduce(function(s,f){return s+f.cal;},0);
+    html += '<div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:10px 0 4px">'
+      + meal + ' <span style="font-family:Fira Code,monospace;color:#F59E0B">'+mealCal+' kcal</span></div>';
+    items.forEach(function(f,i) {
+      html += '<div class="food-item" style="animation-delay:'+(i*30)+'ms">'
+        + '<div class="food-icon">'+(f.icon||'🍽️')+'</div>'
+        + '<div style="flex:1;min-width:0">'
+        + '<div class="food-name">'+escH(f.name)+'</div>'
+        + '<div style="display:flex;gap:8px;margin-top:2px">'
+        + '<span class="food-cal">'+f.cal+' kcal</span>'
+        + '<span class="food-protein">'+f.protein+'g prot</span>'
+        + '<span style="font-family:Fira Code,monospace;font-size:10px;color:var(--text3)">'+f.carbs+'g C | '+f.fat+'g F</span>'
+        + '</div></div>'
+        + '<button class="food-del" onclick="deleteFood('+f.id+')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>'
+        + '</div>';
+    });
+  });
+  el.innerHTML = html;
+}
+
+/* ── AI Insight ── */
+function renderNutrInsight(totals, targets, stats) {
+  var el = document.getElementById('nutrInsightText');
+  if(!el) return;
+  if(!stats) { el.textContent = 'Set up your body stats to get personalized nutrition insights.'; return; }
+  var calLeft  = targets.cal - totals.cal;
+  var protLeft = targets.protein - totals.protein;
+  var goal = stats.goal;
+  var insights = [];
+  if(totals.protein < targets.protein * 0.5 && new Date().getHours() > 14)
+    insights.push('You are low on protein today (' + Math.round(totals.protein) + 'g of ' + targets.protein + 'g). Add a protein-rich meal or snack like grilled chicken, paneer, eggs, or a whey shake.');
+  if(getWaterToday() < 4 && new Date().getHours() > 12)
+    insights.push('You have only had ' + getWaterToday() + ' glasses of water. Aim for 8 glasses — dehydration can cause hunger and slow metabolism.');
+  if(calLeft > 600 && new Date().getHours() > 18)
+    insights.push('You still have ' + calLeft + ' kcal left for dinner. A high-protein dinner now would help you hit your daily targets.');
+  if(calLeft < 0)
+    insights.push('You have exceeded your daily calorie target by ' + Math.abs(calLeft) + ' kcal. Balance it tomorrow with lighter meals or a short walk.');
+  if(goal === 'gain' && totals.protein < targets.protein)
+    insights.push('For muscle gain, hitting your protein target is the #1 priority. You need ' + protLeft + 'g more protein today.');
+  if(!insights.length)
+    insights.push('Great job staying on track! Your macros look balanced. Keep hydrating and aim for consistency day after day.');
+  el.textContent = insights[Math.floor(Date.now()/30000) % insights.length];
+}
+
+/* ── Quick food pills ── */
+function renderQuickFoods() {
+  var el = document.getElementById('quickFoodPills');
+  if(!el) return;
+  el.innerHTML = QUICK_FOODS.slice(0, 10).map(function(f, i) {
+    return '<div class="quick-food-pill" onclick="quickAddFood('+i+')">'
+      + f.icon + ' ' + f.name
+      + '<span style="font-family:Fira Code,monospace;font-size:10px;color:var(--text3)">+'+f.cal+'</span>'
+      + '</div>';
+  }).join('');
+}
+
+/* ── Main page render ── */
+function renderNutritionPage() {
+  renderBMICard();
+  renderWeightLog();
+  renderNutrStats();
+  renderMacroProgress();
+  renderFoodLog();
+  renderQuickFoods();
+  renderWaterTracker();
+  detectLocation();
+  renderDeliveryButtons();
+}
+
 
 /* ════════════════════════════════════════════════════════════
    STRAVA INTEGRATION ENGINE
