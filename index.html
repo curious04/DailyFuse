@@ -1083,6 +1083,8 @@ body{
   .nutr-macro-rings{justify-content:center}
 }
 
+.umenu-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:background 0.1s}
+.umenu-row:hover{background:var(--bg3)}
 </style>
 </head>
 <body>
@@ -2122,31 +2124,82 @@ let currentUser = null;
 let db = null;
 let prefs = {sound:true, anim:true, quote:true, mood:true, theme:'obsidian', font:'jakarta', accent:null};
 
-function userKey(u) { return `df_v3_${u.id}`; }
-function prefsKey() { return 'df_prefs_v3'; }
+/* ── All keys are namespaced by user ID so each account is fully isolated ── */
+function userKey(u)   { return 'df_v3_' + u.id; }
+function prefsKey()   { return currentUser ? 'df_prefs_' + currentUser.id : 'df_prefs_guest'; }
+function reminderKey(){ return currentUser ? 'df_remprefs_' + currentUser.id : null; }
+function sessionKey() { return 'df_session'; }          /* stores last logged-in user id */
 
+/* ── Goals + check-ins DB (per user) ── */
 function loadDB() {
   if(!currentUser) return;
   const raw = localStorage.getItem(userKey(currentUser));
   if(raw) { try { db = JSON.parse(raw); } catch(e){ db = freshDB(); } }
   else db = freshDB();
+  /* Migrate old data: ensure all required fields exist */
+  if(!db.goals)    db.goals    = [];
+  if(!db.checkins) db.checkins = [];
+  if(!db.moods)    db.moods    = [];
 }
-function saveDB() { if(!currentUser||!db) return; localStorage.setItem(userKey(currentUser), JSON.stringify(db)); }
-function freshDB() {
-  return { goals:[], checkins:[], moods:[] };
+function saveDB() {
+  if(!currentUser || !db) return;
+  localStorage.setItem(userKey(currentUser), JSON.stringify(db));
 }
+function freshDB() { return { goals:[], checkins:[], moods:[] }; }
+
+/* ── Per-user prefs (theme, sound, font etc.) ── */
 function loadPrefs() {
   const raw = localStorage.getItem(prefsKey());
-  if(raw) { try { prefs = {...prefs,...JSON.parse(raw)}; } catch(e){} }
+  if(raw) { try { prefs = {...prefs, ...JSON.parse(raw)}; } catch(e){} }
 }
 function savePrefs() { localStorage.setItem(prefsKey(), JSON.stringify(prefs)); }
 
+/* ── Account registry (stores up to 5 accounts with full profile) ── */
 function getKnownAccounts() {
-  try { return JSON.parse(localStorage.getItem('df_accounts')||'[]'); } catch(e){ return []; }
+  try { return JSON.parse(localStorage.getItem('df_accounts') || '[]'); }
+  catch(e) { return []; }
 }
 function saveKnownAccount(u) {
-  const accs = getKnownAccounts().filter(a=>a.id!==u.id);
-  accs.unshift(u); localStorage.setItem('df_accounts', JSON.stringify(accs.slice(0,3)));
+  /* Always save full profile so returning users have their picture/name fresh */
+  const accs = getKnownAccounts().filter(a => a.id !== u.id);
+  accs.unshift({
+    id:           u.id,
+    name:         u.name,
+    email:        u.email,
+    picture:      u.picture || null,
+    googleLinked: u.googleLinked || false,
+    lastLogin:    new Date().toISOString(),
+  });
+  localStorage.setItem('df_accounts', JSON.stringify(accs.slice(0, 5)));
+}
+
+/* ── Session persistence: remember last user across page reloads ── */
+function saveSession(userId) {
+  localStorage.setItem(sessionKey(), userId);
+}
+function clearSession() {
+  localStorage.removeItem(sessionKey());
+}
+function getLastSessionUserId() {
+  return localStorage.getItem(sessionKey()) || null;
+}
+
+/* ── Auto-restore session on page load ── */
+function tryAutoLogin() {
+  const lastId = getLastSessionUserId();
+  if(!lastId) return false;
+  const accs = getKnownAccounts();
+  const user = accs.find(a => a.id === lastId);
+  if(!user) return false;
+  /* Restore silently — no toast, no sound, no seed */
+  currentUser = user;
+  loadDB();
+  loadPrefs();
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appShell').classList.remove('hidden');
+  setupUI();
+  scheduleEmailChecks();
+  return true;
 }
 
 function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
@@ -2259,17 +2312,21 @@ function initGoogleSignIn() {
 
 function handleGoogleCredential(response) {
   try {
-    /* Decode JWT payload (no signature verification needed client-side) */
+    /* Decode JWT payload — payload.sub is the stable Google user ID */
     const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    /* Prefix with g_ to distinguish Google accounts from manual ones */
+    const userId = 'g_' + payload.sub;
+    const existing = getKnownAccounts().find(a => a.id === userId);
     const user = {
-      id: payload.sub || btoa(payload.email),
-      name: payload.name,
-      email: payload.email,
-      picture: payload.picture || null,
+      id:           userId,
+      name:         payload.name,
+      email:        payload.email,
+      picture:      payload.picture || (existing ? existing.picture : null),
       googleLinked: true,
     };
+    const isNew = !existing && !localStorage.getItem(userKey(user));
     closeGooglePopup();
-    loginAs(user);
+    loginAs(user, isNew);
   } catch(e) {
     console.error('Google credential error:', e);
     showGManualForm();
@@ -2328,7 +2385,10 @@ function renderSavedAccounts() {
       + '<div class="g-account-name">' + escH(u.name) + '</div>'
       + '<div class="g-account-email">' + escH(u.email) + '</div>'
       + '</div>'
-      + '<div style="margin-left:auto;color:#5f6368;font-size:11px">' + (u.googleLinked ? 'Google' : 'Local') + '</div>'
+      + '<div style="margin-left:auto;text-align:right">'
+      + '<div style="font-size:11px;color:' + (u.googleLinked ? '#4285F4' : '#5f6368') + '">' + (u.googleLinked ? 'Google' : 'Local') + '</div>'
+      + (u.lastLogin ? '<div style="font-size:10px;color:#9aa0a6;margin-top:1px">' + new Date(u.lastLogin).toLocaleDateString('en-US',{month:'short',day:'numeric'}) + '</div>' : '')
+      + '</div>'
       + '</div>';
   }).join('');
   list.innerHTML = html;
@@ -2352,45 +2412,124 @@ function signInWithManualAccount() {
   const email = document.getElementById('gEmailInput').value.trim();
   if(!name){ document.getElementById('gNameInput').style.borderColor='#ea4335'; return; }
   if(!email || !email.includes('@')){ document.getElementById('gEmailInput').style.borderColor='#ea4335'; return; }
-  const user = {
-    id: btoa(unescape(encodeURIComponent(email))).replace(/[+/=]/g,''),
-    name, email, googleLinked: false,
-  };
+  /* Stable ID: base64 of email (consistent across sessions) */
+  const userId = btoa(unescape(encodeURIComponent(email.toLowerCase()))).replace(/[+/=]/g, '');
+  /* Check if this account already has data */
+  const existingAccs = getKnownAccounts();
+  const existing = existingAccs.find(a => a.id === userId || a.email === email.toLowerCase());
+  const user = existing
+    ? { ...existing, name, email }        /* returning user — keep existing id */
+    : { id: userId, name, email, googleLinked: false };
+  const isNew = !existing && !localStorage.getItem(userKey(user));
   closeGooglePopup();
-  loginAs(user, true);
+  loginAs(user, isNew);
 }
 
 function startDemo() {
   Sound.init(); Sound.click();
-  loginAs({id:'demo_user_001', name:'Demo User', email:'demo@dailyfuse.app', googleLinked:false}, true);
+  const demoUser = {id:'demo_user_001', name:'Demo User', email:'demo@dailyfuse.app', googleLinked:false};
+  const demoIsNew = !localStorage.getItem(userKey(demoUser));
+  loginAs(demoUser, demoIsNew);
 }
 
 function loginAs(user, isNew=false) {
   Sound.init();
   currentUser = user;
   saveKnownAccount(user);
+  saveSession(user.id);          /* persist session across page reloads */
   loadDB();
-  if(db.goals.length===0) seedGoals();
+  loadPrefs();                   /* load this user's saved prefs */
+  applyPrefs();
+  /* Only seed sample goals for brand new accounts with zero data */
+  const hasExistingData = db.goals.length > 0 || db.checkins.length > 0;
+  if(!hasExistingData && isNew) seedGoals();
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('appShell').classList.remove('hidden');
   setupUI();
   Sound.login();
   const firstName = user.name.split(' ')[0];
-  showToast(`Welcome${isNew?'':' back'}, ${firstName}! 👋`, 'success');
-  /* Schedule email checks */
+  const isReturning = !isNew && hasExistingData;
+  showToast(isReturning
+    ? `Welcome back, ${firstName}! Your data is ready.`
+    : `Welcome to DailyFuse, ${firstName}! Let's set your goals.`,
+    'success'
+  );
   scheduleEmailChecks();
+  /* Check for pending Strava auth after login */
+  if(window._checkPendingStrava) window._checkPendingStrava();
+}
+
+function showUserMenu() {
+  Sound.click();
+  const existing = document.getElementById('userMenuPopup');
+  if(existing) { existing.remove(); return; }
+  const accs = getKnownAccounts();
+  const otherAccs = accs.filter(a => a.id !== currentUser.id);
+  const popup = document.createElement('div');
+  popup.id = 'userMenuPopup';
+  popup.style.cssText = 'position:fixed;left:224px;top:80px;z-index:9999;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:8px;min-width:230px;box-shadow:0 12px 40px rgba(0,0,0,0.5)';
+  var html = '<div style="padding:10px 12px 8px;border-bottom:1px solid var(--border);margin-bottom:4px">'
+    + '<div style="font-size:13px;font-weight:700">' + escH(currentUser.name) + '</div>'
+    + '<div style="font-size:11px;color:var(--text2)">' + escH(currentUser.email) + '</div>'
+    + '<div style="font-size:10px;color:var(--text3);margin-top:2px">' + (currentUser.googleLinked ? 'Google Account' : 'Local Account') + ' | Signed in</div>'
+    + '</div>';
+  if(otherAccs.length) {
+    html += '<div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 12px 2px">Switch to</div>';
+    otherAccs.forEach(function(u) {
+      var initials = u.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+      html += '<div onclick="switchToAccount(this.dataset.uid)" data-uid="' + escH(u.id) + '" class="umenu-row">'
+        + '<div style="width:28px;height:28px;border-radius:50%;background:#4285F4;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">' + initials + '</div>'
+        + '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escH(u.name) + '</div>'
+        + '<div style="font-size:10px;color:var(--text2)">' + escH(u.email) + '</div></div>'
+        + '</div>';
+    });
+    html += '<div style="height:1px;background:var(--border);margin:4px 0"></div>';
+  }
+  html += '<div onclick="startGoogleLogin()" class="umenu-row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add another account</div>';
+  html += '<div onclick="logout()" class="umenu-row" style="color:#EF4444"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign out</div>';
+  popup.innerHTML = html;
+  document.body.appendChild(popup);
+  setTimeout(function() {
+    document.addEventListener('click', function closeMenu(e) {
+      if(!popup.contains(e.target)) { popup.remove(); document.removeEventListener('click', closeMenu); }
+    });
+  }, 100);
+}
+
+function switchToAccount(elOrId) {
+  var userId = typeof elOrId === 'string' ? elOrId : elOrId.dataset.uid;
+  var popup = document.getElementById('userMenuPopup');
+  if(popup) popup.remove();
+  var accs = getKnownAccounts();
+  var user = accs.find(function(a){ return a.id === userId; });
+  if(!user) return;
+  saveDB();
+  currentUser = user;
+  saveSession(user.id);
+  loadDB();
+  loadPrefs();
+  applyPrefs();
+  setupUI();
+  Sound.login();
+  showToast('Switched to ' + user.name.split(' ')[0] + "'s account", 'success');
 }
 
 function logout() {
   Sound.click();
   if(!confirm('Sign out of DailyFuse?')) return;
-  /* Sign out of Google if applicable */
+  /* Stop email check interval */
+  if(window._emailCheckInterval) clearInterval(window._emailCheckInterval);
+  /* Google sign-out */
   if(typeof google !== 'undefined' && google.accounts) {
     try { google.accounts.id.disableAutoSelect(); } catch(e){}
   }
+  clearSession();               /* remove session so no auto-login next time */
   currentUser = null; db = null;
+  prefs = {sound:true, anim:true, quote:true, mood:true, theme:'obsidian', font:'jakarta', accent:null};
   document.getElementById('appShell').classList.add('hidden');
   document.getElementById('loginScreen').classList.remove('hidden');
+  /* Reset any UI state */
+  applyPrefs();
 }
 
 function changeEmailAccount() {
@@ -2529,16 +2668,17 @@ function scheduleEmailChecks() {
     if(!remPrefs.morning) return;
     const now = new Date();
     const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-    const lastSent = localStorage.getItem(`df_lastReminder_${todayStr()}`);
+    const rKey = `df_lastReminder_${todayStr()}_${currentUser.id}`;
+    const lastSent = localStorage.getItem(rKey);
     if(timeStr === remPrefs.time && !lastSent) {
-      localStorage.setItem(`df_lastReminder_${todayStr()}`, '1');
+      localStorage.setItem(rKey, '1');
       sendReminderEmail('daily');
     }
   }, 60000);
 }
 
 function getRemPrefs() {
-  try { return JSON.parse(localStorage.getItem(`df_remprefs_${currentUser?.id}`)||'{}'); } catch(e){ return {}; }
+  try { return JSON.parse(localStorage.getItem('df_remprefs_' + (currentUser ? currentUser.id : 'guest')) || '{}'); } catch(e){ return {}; }
 }
 function saveReminderPrefs() {
   if(!currentUser) return;
@@ -2549,7 +2689,7 @@ function saveReminderPrefs() {
     complete: document.getElementById('togRemComplete')?.classList.contains('on'),
     streak: document.getElementById('togRemStreak')?.classList.contains('on'),
   };
-  localStorage.setItem(`df_remprefs_${currentUser.id}`, JSON.stringify(p));
+  localStorage.setItem('df_remprefs_' + currentUser.id, JSON.stringify(p));
 }
 function renderRemindersPage() {
   if(!currentUser) return;
@@ -4636,6 +4776,16 @@ applyPrefs();
 BgCanvas.init();
 Particles.init();
 document.getElementById('appShell').classList.add('hidden');
+
+/* ── Auto-login: restore last session before showing any UI ── */
+(function() {
+  /* Try to restore the last logged-in user silently */
+  const restored = tryAutoLogin();
+  if(!restored) {
+    /* Show login — no previous session found */
+    document.getElementById('loginScreen').classList.remove('hidden');
+  }
+})();
 
 /* Init Google Sign-In once the GSI script loads */
 window.onGoogleSignIn = handleGoogleCredential;
