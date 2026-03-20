@@ -1258,6 +1258,10 @@ body{
         <div><div class="page-title" id="todayTitle">Today</div><div class="page-sub" id="todayDate"></div></div>
         <div class="header-actions">
           <button class="btn btn-ghost btn-sm" onclick="openCmdPalette()">⌘K</button>
+          <button class="btn btn-ghost btn-sm" id="syncBtn" onclick="triggerManualSync()" title="Sync to cloud" style="display:none">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="syncBtnIcon"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span id="syncBtnText" style="font-size:11px">Sync</span>
+          </button>
           <button class="btn btn-primary btn-sm" onclick="openAddGoal()">+ Add Goal</button>
         </div>
       </div>
@@ -2175,8 +2179,10 @@ function initFirebase() {
     }
     _firestoreDB  = firebase.firestore(_firebaseApp);
     /* Enable offline persistence so app works without internet */
-    _firestoreDB.enablePersistence({ synchronizeTabs: true })
-      .catch(function(e) { console.warn('Firestore persistence:', e.code); });
+    /* Offline persistence — optional, ignore errors */
+    try {
+      _firestoreDB.enablePersistence({ synchronizeTabs: true }).catch(function(){});
+    } catch(e){}
     _firebaseReady = true;
     updateSyncBadge('idle');
     console.info('DailyFuse: Firebase initialized ✓');
@@ -2203,22 +2209,26 @@ function queueSync(subDoc, data) {
 
 async function flushSyncQueue() {
   if(!_firebaseReady || !_firestoreDB || !currentUser) return;
-  const paths = Object.keys(_syncQueue);
-  if(!paths.length) return;
-  const batch = _firestoreDB.batch();
-  paths.forEach(function(path) {
-    const ref = _firestoreDB.doc(path);
-    batch.set(ref, _syncQueue[path], { merge: true });
-  });
-  _syncQueue = {};
-  try {
-    updateSyncBadge('syncing');
-    await batch.commit();
-    updateSyncBadge('idle');
-    console.log('DailyFuse: Synced', paths.length, 'doc(s) to Firestore');
-  } catch(e) {
-    console.error('Firestore sync error:', e);
-    updateSyncBadge('error');
+  const entries = Object.entries(_syncQueue);
+  if(!entries.length) return;
+  _syncQueue = {};  /* clear before writing to avoid infinite loop */
+  updateSyncBadge('syncing');
+  let errors = 0;
+  for(const [path, data] of entries) {
+    try {
+      await _firestoreDB.doc(path).set(data, { merge: true });
+      console.log('DailyFuse synced:', path.split('/').slice(-1)[0]);
+    } catch(e) {
+      console.error('Firestore write error for', path, ':', e.code, e.message);
+      errors++;
+      /* Re-queue failed writes */
+      _syncQueue[path] = data;
+    }
+  }
+  updateSyncBadge(errors ? 'error' : 'idle');
+  /* Retry failed writes after 5s */
+  if(errors && !_syncTimer) {
+    _syncTimer = setTimeout(flushSyncQueue, 5000);
   }
 }
 
@@ -2286,24 +2296,53 @@ async function pullFromFirestore(uid) {
 /* ── Sync badge in sidebar ── */
 function updateSyncBadge(status) {
   _syncStatus = status;
-  const badge = document.getElementById('syncStatusBadge');
-  if(!badge) return;
   const states = {
-    idle:    { icon: '●', color: '#10B981', title: 'Data synced to cloud' },
-    pending: { icon: '◌', color: '#F59E0B', title: 'Saving...' },
-    syncing: { icon: '◌', color: '#3B82F6', title: 'Syncing to cloud...' },
-    error:   { icon: '●', color: '#EF4444', title: 'Sync error — data saved locally' },
-    offline: { icon: '○', color: '#6B7280', title: 'Offline — will sync when connected' },
+    idle:    { icon: '●', color: '#10B981', title: 'Data synced to cloud',           btnText: 'Synced' },
+    pending: { icon: '◌', color: '#F59E0B', title: 'Saving...',                      btnText: 'Saving...' },
+    syncing: { icon: '◌', color: '#3B82F6', title: 'Syncing to cloud...',            btnText: 'Syncing...' },
+    error:   { icon: '●', color: '#EF4444', title: 'Sync error — check console',     btnText: 'Retry' },
+    offline: { icon: '○', color: '#6B7280', title: 'Offline — will sync when online',btnText: 'Offline' },
   };
   const s = states[status] || states.idle;
-  badge.style.color = s.color;
-  badge.title = s.title;
-  badge.textContent = s.icon;
-  if(status === 'syncing' || status === 'pending') {
-    badge.style.animation = 'pulse 1s ease-in-out infinite';
-  } else {
-    badge.style.animation = '';
+  const badge   = document.getElementById('syncStatusBadge');
+  const btn     = document.getElementById('syncBtn');
+  const btnText = document.getElementById('syncBtnText');
+  const btnIcon = document.getElementById('syncBtnIcon');
+  if(badge) {
+    badge.style.color = s.color;
+    badge.title       = s.title;
+    badge.textContent = s.icon;
+    badge.style.animation = (status==='syncing'||status==='pending') ? 'pulse 1s ease-in-out infinite' : '';
   }
+  /* Show sync button only when Firebase is active */
+  if(btn && _firebaseReady) {
+    btn.style.display = 'flex';
+    if(btnText) btnText.textContent = s.btnText;
+    if(btnIcon) btnIcon.style.color = s.color;
+    if(status === 'syncing' || status === 'pending') {
+      if(btnIcon) btnIcon.style.animation = 'spin 1s linear infinite';
+    } else {
+      if(btnIcon) btnIcon.style.animation = '';
+    }
+  }
+}
+
+function triggerManualSync() {
+  if(!_firebaseReady) { showToast('Firebase not configured yet', 'error'); return; }
+  if(!currentUser) return;
+  Sound.click();
+  /* Queue all current data */
+  if(db) queueSync('goals', { goals: db.goals, checkins: db.checkins, moods: db.moods, updatedAt: Date.now() });
+  queueSync('prefs', prefs);
+  syncNutritionToFirestore();
+  /* Flush immediately */
+  clearTimeout(_syncTimer);
+  _syncTimer = null;
+  flushSyncQueue().then(function() {
+    showToast('All data synced to cloud!', 'success');
+  }).catch(function() {
+    showToast('Sync failed — check console for details', 'error');
+  });
 }
 
 /* ── Main DB functions (localStorage + Firestore) ── */
@@ -5081,22 +5120,62 @@ BgCanvas.init();
 Particles.init();
 document.getElementById('appShell').classList.add('hidden');
 
-/* ── Initialize Firebase (if configured) ── */
-initFirebase();
 
-/* ── Monitor online/offline status ── */
-window.addEventListener('online',  function(){ updateSyncBadge('idle');    flushSyncQueue(); });
+/* ── Debug helper — open browser console and call dailyfuseDebug() ── */
+window.dailyfuseDebug = function() {
+  console.group('%cDailyFuse Debug', 'color:#7c6df0;font-weight:bold;font-size:14px');
+  console.log('Firebase ready:', _firebaseReady);
+  console.log('Firebase project:', CONFIG.FIREBASE_PROJECT_ID || '(not set)');
+  console.log('Current user:', currentUser ? currentUser.email : 'not logged in');
+  console.log('DB goals:', db ? db.goals.length : 0);
+  console.log('Sync queue:', Object.keys(_syncQueue));
+  console.log('Sync status:', _syncStatus);
+  if(_firebaseReady && currentUser) {
+    console.log('Manually flushing sync queue...');
+    flushSyncQueue().then(function(){ console.log('Flush complete'); });
+  }
+  console.groupEnd();
+  return 'Debug info logged above ↑';
+};
+window.dailyfuseForceSync = function() {
+  if(!_firebaseReady) { console.warn('Firebase not ready'); return; }
+  if(!currentUser) { console.warn('Not logged in'); return; }
+  /* Queue everything */
+  if(db) queueSync('goals', { goals: db.goals, checkins: db.checkins, moods: db.moods, updatedAt: Date.now() });
+  queueSync('prefs', prefs);
+  syncNutritionToFirestore();
+  /* Flush immediately */
+  clearTimeout(_syncTimer);
+  flushSyncQueue().then(function(){ console.log('%cForce sync complete!', 'color:#10B981;font-weight:bold'); });
+  return 'Force sync started — check console for results';
+};
+
+/* ── Online/offline monitoring ── */
+window.addEventListener('online',  function(){ updateSyncBadge('idle'); flushSyncQueue(); });
 window.addEventListener('offline', function(){ updateSyncBadge('offline'); });
 
-/* ── Auto-login: restore last session before showing any UI ── */
-(function() {
-  /* Try to restore the last logged-in user silently */
+/* ── Initialize Firebase then auto-login ── */
+function bootApp() {
+  /* Try Firebase init — SDK must be loaded by now */
+  if(typeof firebase !== 'undefined') {
+    initFirebase();
+  } else {
+    console.warn('DailyFuse: Firebase SDK not available, using localStorage only.');
+  }
+
+  /* Auto-login: restore last session */
   const restored = tryAutoLogin();
   if(!restored) {
-    /* Show login — no previous session found */
     document.getElementById('loginScreen').classList.remove('hidden');
   }
-})();
+}
+
+/* Run after DOM + all scripts are ready */
+if(document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootApp);
+} else {
+  bootApp();
+}
 
 /* Init Google Sign-In once the GSI script loads */
 window.onGoogleSignIn = handleGoogleCredential;
